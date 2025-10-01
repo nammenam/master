@@ -109,3 +109,11 @@ def create_conv_connections(input_shape, output_shape):
                         connections[pre_syn_idx].append((on_neuron_idx, -1.0, 0.0))
                         connections[pre_syn_idx].append((off_neuron_idx, 1.0, 0.0))
     return connections
+
+def create_random_image_with_line(width: int, height: int) -> Image.Image:
+    random_pixels = np.random.randint(0, 256, (height, width, 3), dtype=np.uint8)
+    line_y_position = height // 2
+    line_color = (0, 0, 0)  # Black color (R, G, B)
+    random_pixels[line_y_position, :] = line_color
+    final_image = Image.fromarray(random_pixels, 'RGB')
+    return final_image

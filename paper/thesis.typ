@@ -6,7 +6,7 @@
 // ================================================================================================
 
 // #set text(font: "Source Serif 4 18pt", size: 11pt)
-#set text(font: "Geist", size: 10.5pt)
+#set text(font: "Geist", size: 10pt)
 #show math.equation : set text(font:"TeX Gyre Schola Math", size: 10.5pt)
 #show raw : set text(font:"GeistMono NF", weight: "medium", size:9pt)
 #set list(marker: sym.square.filled.small, indent: 1em)
@@ -154,17 +154,18 @@ information. The model of the neuron that the is based on has synapses just like
 one, the synapses functions as inputs which when firing will exite the reciving neuron more or less
 depending on the strenth of the connection. If the reciving neuron get exited above a threshold it
 will fire and pass the signal downstream to another reciving neuron. Which is conceptually similar
-to how real neurons operate. $ z = a(sum x w) $
+to how real neurons operate. $ z = a circle.stroked.small sum x w $
+]
 #figure(caption:"perceptron")[#include("figures/perceptron.typ")]
-This simple
-model is called a perceptron, which introduced a learning rule for a single computational neuron
-capable of classifying linearly separable patterns. However, to the MLP was the understanding that
-stacking multiple layers of these perceptron-like units could overcome these limitations by creating
-more complex decision boundaries. The critical breakthrough enabling the practical use of MLPs
-was the independent development and subsequent popularization of the backpropagation algorithm.
-Backpropagation provided an efficient method to calculate the gradient of the error function with
-respect to the network's weights, allowing for effective training of these deeper, multi-layered
-architectures. This combination---multiple layers of interconnected units
+#serif-text()[
+This simple model is called a perceptron, which introduced a learning rule for a single
+computational neuron capable of classifying linearly separable patterns. However, to the MLP was
+the understanding that stacking multiple layers of these perceptron-like units could overcome
+these limitations by creating more complex decision boundaries. The critical breakthrough enabling
+the practical use of MLPs was the independent development and subsequent popularization of the
+backpropagation algorithm. Backpropagation provided an efficient method to calculate the gradient of
+the error function with respect to the network's weights, allowing for effective training of these
+deeper, multi-layered architectures. This combination---multiple layers of interconnected units
 #footnote[
   While often conceptualized in layers (e.g., layers of the neocortex), the brain's connectivity
   is vastly more complex than typical feedforward ANNs, featuring extensive recurrent connections,
@@ -240,10 +241,12 @@ glutamate. There are ion channels and some calsium idk.
 // preserve spatial information.
 // For sequences like text, audio, or video, apply n-of-m coding to time frames. For video, combine
 // n-of-m coding across both spatial chunks and temporal frames. Can be linked to brain waves.
+#serif-text()[
 It is observed that neurons fire in short bursts called spikes. Experiments show that neurons fire
 repetably. A sequence of spikes is called a spike train, and exactly how information is encoded in a
 spike train is a topic of hot debate in neuroscience. A popular idea is that information is encoded
 in the average value of spikes per time called rate encoding
+]
 
 === Learning
 
@@ -256,6 +259,7 @@ in the average value of spikes per time called rate encoding
 // Move Synapses: Adjust existing synapses toward frequently active input neurons to refine
 // connections.
 // Prune Synapses: Remove inactive synapses over time to maintain efficiency and sparsity.
+#serif-text()[
 _Spikes Do Not Play Nice With Gradients_. While models like Spiking Neural Networks (SNNs) offer
 greater biological plausibility and potential advantages in processing temporal information and
 energy efficiency, their adoption faces significant challenges, primarily stemming from the nature
@@ -289,6 +293,7 @@ generation, the backward pass replaces the step function's derivative with a smo
 approximation (e.g., a fast sigmoid or a clipped linear function). This allows backpropagation-like
 algorithms (often termed "spatio-temporal backpropagation" or similar) to estimate gradients and
 train deep SNNs, albeit with approximations.
+]
 
 === Network
 
@@ -298,6 +303,7 @@ train deep SNNs, albeit with approximations.
 // Binary weights (also maybe more relevant in the neuron section)
 // only check if there is and outgoing/incomming spike or not
 
+#serif-text()[
 However, this abstraction, while powerful, significantly simplifies the underlying neurobiology.
 Decades of rigorous neuroscience research reveal that brain function emerges from complex
 electro-chemical and molecular dynamics far richer than the simple weighted sum and static
@@ -332,6 +338,7 @@ processing. These biologically observed principles—event-based communication, 
 and complex network dynamics—motivate the exploration of Spiking Neural Networks (SNNs), which
 explicitly model individual spike events and their timing, offering a potentially more powerful and
 biologically plausible framework for computation than traditional MLPs.
+]
 
 = Methodology
 

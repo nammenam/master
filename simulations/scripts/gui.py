@@ -22,7 +22,7 @@ NUM_NEURONS_PER_MAP = OUTPUT_SHAPE[0] * OUTPUT_SHAPE[1]
 TOTAL_NEURONS = NUM_NEURONS_PER_MAP * 2
 # LIF Neuron Parameters
 TAU_M = 10.0          # Membrane time constant (ms)
-V_THRESH = 1.0        # Firing threshold
+V_THRESH = 3        # Firing threshold
 V_REST = 0.0          # Resting potential
 W_LATERAL_INH = -0.5  # Weight of lateral inhibition
 LATERAL_DELAY = 1.0   # Delay for lateral inhibition spike (ms)
@@ -90,7 +90,7 @@ def update_series_data(spikes, indices):
     for t, target, w in zip(arrival_times, target_indices, weights):
         event_queue.append((t, 'FF', {'target': target, 'weight': w}))
     event_queue.sort(key=lambda x: x[0])
-    # membrane_potentials = np.full(TOTAL_NEURONS, V_REST, dtype=float)
+    membrane_potentials = np.full(TOTAL_NEURONS, V_REST, dtype=float)
     last_update_times = np.zeros(TOTAL_NEURONS, dtype=float)
     output_spike_times = np.full(TOTAL_NEURONS, np.nan, dtype=float)
     output_image = np.zeros(OUTPUT_SHAPE, dtype=np.float32)
@@ -115,14 +115,14 @@ def update_series_data(spikes, indices):
 
             time_delta = event_time - last_update_times[target_idx]
             # if time_delta > 0:
-                # membrane_potentials[target_idx] *= exp(-time_delta / TAU_M)
+              # membrane_potentials[target_idx] *= exp(-time_delta / TAU_M)
         
-            # membrane_potentials[target_idx] += weight
+            membrane_potentials[target_idx] += weight
             last_update_times[target_idx] = event_time
 
-            # if membrane_potentials[target_idx] >= V_THRESH:
-            output_spike_times[target_idx] = event_time
-            #     membrane_potentials[target_idx] = V_REST
+            if membrane_potentials[target_idx] >= V_THRESH:
+                output_spike_times[target_idx] = event_time
+                membrane_potentials[target_idx] = V_REST
             output_spike_list_x.append(event_time)
             output_spike_list_y.append(target_idx)
             map_offset = 0
@@ -133,7 +133,8 @@ def update_series_data(spikes, indices):
             y = neuron_2d_idx // OUTPUT_WIDTH
             x = neuron_2d_idx % OUTPUT_WIDTH
             max_time = spikes[-1] if len(spikes) > 0 else 1.0
-            brightness = max(0.01, 1.0 - (event_time / max_time))
+            # brightness = max(0.01, 1.0 - (event_time / max_time))
+            brightness = output_spike_times[target_idx]
             out_img[y,x,0] = brightness
             out_img[y,x,1] = brightness
             out_img[y,x,2] = brightness * weight
@@ -293,6 +294,8 @@ def run_gui(input_image):
                         tag="input_image"
                     )
                 dpg.add_image("input_image")
+                dpg.add_separator()
+                dpg.add_simple_plot(default_value=(1,0.5),histogram=True, height=100, width=80)
                 dpg.add_separator()
                 dpg.add_text(f"Frame: {dpg.get_frame_count()}", tag="frame_text")
                 dpg.add_text(f"Time:  {simulation_time}", tag="time_text")
