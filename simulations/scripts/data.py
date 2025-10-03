@@ -29,3 +29,26 @@ def generate_spatiotemporal_stimuli(sequence_length, grid_size, pattern, num_inj
         combined_spikes = np.fmin(injection_slice, pattern)
         stimuli_sequence[t_inject][y_start:y_start+p_height, x_start:x_start+p_width] = combined_spikes
     return stimuli_sequence
+
+def create_random_image_three_channel(width: int, height: int):
+    random_pixels = np.random.randint(0, 256, (height, width, 3), dtype=np.uint8)
+    return random_pixels
+
+def create_random_image_one_channel(width: int, height: int):
+    random_pixels = np.random.randint(0, 256, (height, width), dtype=np.uint8)
+    return random_pixels
+
+def to_grayscale(rgb_image: np.ndarray) -> np.ndarray:
+    rgb_weights = np.array([0.299, 0.587, 0.114])
+    grayscale_image = np.dot(rgb_image[...,:3], rgb_weights)
+    return grayscale_image.astype(np.uint8)
+
+def three_to_one_channel(gray_3_channel: np.ndarray) -> np.ndarray:
+    if gray_3_channel.ndim != 3 or gray_3_channel.shape[2] != 3:
+        raise ValueError("Input must be a 3-channel image with shape (height, width, 3).")
+    return gray_3_channel[:, :, 0]
+
+def one_to_three_channel(gray_1_channel: np.ndarray) -> np.ndarray:
+    if gray_1_channel.ndim != 2:
+        raise ValueError("Input must be a 1-channel image with shape (height, width).")
+    return np.stack([gray_1_channel] * 3, axis=-1)
