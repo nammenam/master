@@ -13,10 +13,10 @@ from core import intensity_to_delay_encoding,create_conv_connections, get_postsy
 
 MAX_POINTS = 2000
 TIME_STEP = 0.01
-INPUT_SHAPE = (28, 28)
-OUTPUT_SHAPE = (28, 28)
-# INPUT_SHAPE = (16, 16)
-# OUTPUT_SHAPE = (14, 14)
+# INPUT_SHAPE = (28, 28)
+# OUTPUT_SHAPE = (28, 28)
+INPUT_SHAPE = (8, 8)
+OUTPUT_SHAPE = (6, 6)
 OUTPUT_WIDTH = OUTPUT_SHAPE[1]
 NUM_NEURONS_PER_MAP = OUTPUT_SHAPE[0] * OUTPUT_SHAPE[1]
 TOTAL_NEURONS = NUM_NEURONS_PER_MAP * 2
@@ -36,8 +36,9 @@ simulation_time = 0.0
 start_time = -(MAX_POINTS - 1) * TIME_STEP
 initial_time_data = np.linspace(start_time, 0.0, num=MAX_POINTS)
 time_data = collections.deque(initial_time_data, maxlen=MAX_POINTS)
-# incoming_spikes = collections.deque([0,0] * MAX_POINTS, maxlen=MAX_POINTS)
 simulation_time = 0
+connections = []
+neurons     = []
 
 def key_press_handler(sender, app_data):
     global is_paused
@@ -67,6 +68,11 @@ def update_text():
         dpg.set_value("time_text", f"Time: {simulation_time}")
         time.sleep(0.1)
 
+def fill_event_queue(event_queue, arrival_times, target_indices, weights):
+    for t, target, w in zip(arrival_times, target_indices, weights):
+        event_queue.append((t, 'FF', {'target': target, 'weight': w}))
+    event_queue.sort(key=lambda x: x[0])
+
 def update_series_data(spikes, indices):
     global simulation_time
     connection_map = create_conv_connections(INPUT_SHAPE, OUTPUT_SHAPE)
@@ -79,17 +85,8 @@ def update_series_data(spikes, indices):
         connections=connection_map
     )
 
-    # target_neuron_idx = (OUTPUT_WIDTH * OUTPUT_WIDTH) + (TARGET_Y * OUTPUT_WIDTH + TARGET_X)
-    # print(f"🔬 Monitoring Neuron Index: {target_neuron_idx}")
-    # mask = (target_indices == target_neuron_idx)
-    # neuron_input_times = arrival_times[mask]
-    # neuron_input_weights = weights[mask]
-    # print(f"✅ Neuron {target_neuron_idx} received {len(neuron_input_times)} synaptic inputs.")
-
     event_queue = []
-    for t, target, w in zip(arrival_times, target_indices, weights):
-        event_queue.append((t, 'FF', {'target': target, 'weight': w}))
-    event_queue.sort(key=lambda x: x[0])
+    fill_event_queue(event_queue,arrival_times,target_indices,weights)
     membrane_potentials = np.full(TOTAL_NEURONS, V_REST, dtype=float)
     last_update_times = np.zeros(TOTAL_NEURONS, dtype=float)
     output_spike_times = np.full(TOTAL_NEURONS, np.nan, dtype=float)
@@ -103,6 +100,9 @@ def update_series_data(spikes, indices):
             step_event.clear()
 
         event_time, event_type, data = event_queue.pop(0)
+        if len(event_queue) == 0:
+            fill_event_queue(event_queue,arrival_times,target_indices,weights)
+            last_update_times = np.zeros(TOTAL_NEURONS, dtype=float)
         now_time = event_time
         out_img = out_img * 0.999
         if now_time < simulation_time:
@@ -114,8 +114,8 @@ def update_series_data(spikes, indices):
                 continue
 
             time_delta = event_time - last_update_times[target_idx]
-            # if time_delta > 0:
-              # membrane_potentials[target_idx] *= exp(-time_delta / TAU_M)
+            if time_delta > 0:
+              membrane_potentials[target_idx] *= exp(-time_delta / TAU_M)
         
             membrane_potentials[target_idx] += weight
             last_update_times[target_idx] = event_time
@@ -162,7 +162,7 @@ def update_series_data(spikes, indices):
         # if len(output_spike_list_x) % 10 == 0 or is_paused:
             # dpg.set_value("out_spikes_series", [output_spike_list_x, output_spike_list_y])
         scaled_img = scale_image(out_img, int(256/OUTPUT_SHAPE[0]))
-        dpg.set_value("neurons1",scaled_img.flatten() )
+        dpg.set_value("neurons0",scaled_img.flatten() )
             # dpg.set_value('exc_spikes_series', [list(neuron_input_times), list(neuron_input_weights)])
         # dpg.set_value('exc_spikes_series', [list(exc_times), list(exc_indices)])
         # dpg.set_value('inh_spikes_series', [list(inh_times), list(inh_indices)])
@@ -218,7 +218,7 @@ def run_gui(input_image):
             with dpg.child_window(width=VIEWPORT_WIDTH * 0.7):
                 
                 SCALE_FACTOR_OUT = int(256 / OUTPUT_SHAPE[0])
-                default_value = np.ones(OUTPUT_SHAPE, dtype=np.float32)
+                default_value = np.zeros(OUTPUT_SHAPE, dtype=np.float32)
                 default_image = scale_image(default_value, SCALE_FACTOR_OUT)
                 default_image_rbga = rgba_image(default_image).flatten()
                 with dpg.texture_registry(show=True):
@@ -228,56 +228,25 @@ def run_gui(input_image):
                         default_value=default_image_rbga,
                         tag="neurons0"
                     )
-                    dpg.add_dynamic_texture(
-                        width=default_image.shape[1],
-                        height=default_image.shape[0],
-                        default_value = default_image_rbga,
-                        tag="neurons1"
-                    )
+                    # dpg.add_dynamic_texture(
+                    #     width=default_image.shape[1],
+                    #     height=default_image.shape[0],
+                    #     default_value = default_image_rbga,
+                    #     tag="neurons1"
+                    # )
 
                 with dpg.group(horizontal=True):
                     dpg.add_image("neurons0")
-                    dpg.add_image("neurons1")
+                    # dpg.add_image("neurons1")
                 dpg.add_separator()
 
-                with dpg.texture_registry(show=True):
-                    dpg.add_dynamic_texture(
-                        width=default_image.shape[1],
-                        height=default_image.shape[0],
-                        default_value=default_image_rbga,
-                        tag="weights0"
-                    )
-                    dpg.add_dynamic_texture(
-                        width=default_image.shape[1],
-                        height=default_image.shape[0],
-                        default_value = default_image_rbga,
-                        tag="weights1"
-                    )
-                with dpg.group(horizontal=True):
-                    dpg.add_image("weights0")
-                    dpg.add_image("weights1")
+                with dpg.drawlist(width=300, height=1980):
+                    for i in range(INPUT_SHAPE[0] * INPUT_SHAPE[1]):
+                        dpg.draw_circle((5,i*8 + 15),3, fill=(255,255,255))
+                    for i in range(OUTPUT_SHAPE[0] * OUTPUT_SHAPE[1]):
+                        dpg.draw_circle((200,i*8 + 115),3, fill=(255,255,255))
 
             with dpg.child_window(width=-1):
-                dpg.add_text("Neuron Controls")
-                dpg.add_separator()
-                dpg.add_spacer(height=10)
-                dpg.add_button(label="Inject Excitatory Spike (+)", callback=inject_excitatory_spike, width=-1, height=40)
-                dpg.add_spacer(height=10)
-                dpg.add_button(label="Inject Inhibitory Spike (-)", callback=inject_inhibitory_spike, width=-1, height=40)
-                dpg.add_spacer(height=20)
-                dpg.add_slider_float(label="Excitatory Weight",
-                                     tag="w_exc_slider",
-                                     default_value=30.0,
-                                     min_value=0.0,
-                                     max_value=100.0,
-                                     width=-200)
-                dpg.add_slider_float(label="Inhibitory Weight",
-                                     tag="w_inh_slider",
-                                     default_value=-15.0,
-                                     min_value=-100.0,
-                                     max_value=0.0,
-                                     width=-200)
-                dpg.add_spacer(height=20)
                 dpg.add_button(label="Reset Simulation", callback=reset_simulation, width=-1, height=40)
                 dpg.add_separator()
 
@@ -293,9 +262,10 @@ def run_gui(input_image):
                         default_value=scaled_image_rgba,
                         tag="input_image"
                     )
-                dpg.add_image("input_image")
-                dpg.add_separator()
-                dpg.add_simple_plot(default_value=(1,0.5),histogram=True, height=100, width=80)
+                with dpg.group(horizontal=True):
+                    dpg.add_image("input_image")
+                    with dpg.drawlist(width=30, height=100):  # or you could use dpg.add_drawlist and set parents manually
+                        dpg.draw_line((0, 0), (0, 100), color=(255, 255, 0, 255), thickness=30)
                 dpg.add_separator()
                 dpg.add_text(f"Frame: {dpg.get_frame_count()}", tag="frame_text")
                 dpg.add_text(f"Time:  {simulation_time}", tag="time_text")
