@@ -35,6 +35,8 @@ if __name__ == "__main__":
 
     vectors = np.array(vectors)
     visualize_image(images[0])
+    # for i in range(30):
+        # visualize_image(images[i])
     fig,ax = plt.subplots()
     ax.quiver(*origin,vectors[0,:,0],vectors[0,:,1],scale=2)
     ax.set_aspect('equal')

@@ -1,5 +1,4 @@
 #import "@preview/lovelace:0.3.0": pseudocode-list
-#import "@preview/wrap-it:0.1.1": wrap-content
 
 // ================================================================================================
 // CONFIG
@@ -10,7 +9,6 @@
 #show math.equation : set text(font:"TeX Gyre Schola Math", size: 10.5pt)
 #show raw : set text(font:"GeistMono NF", weight: "medium", size:9pt)
 #set list(marker: sym.square.filled.small, indent: 1em)
-// #show heading: set text(font:"Source Serif 4",weight: "semibold", style:"italic")
 #show heading: set text(font:"Geist",weight: "bold", style:"italic")
 #show heading.where( level: 1 ): it => block(width: 100%)[
   #set align(left + horizon); #set text(20pt)
@@ -25,7 +23,6 @@
   #line(end:(0em,1.6em),stroke: 2pt + gray)][
   #upper(it)]
   #v(.8em)
-  // #set text(16pt); #upper(it); #v(0.5em)
 ]
 #show heading.where( level: 3 ): it => block(width: 100%)[
   #set text(12pt,weight: "semibold"); #upper(it) #v(0.3em)
@@ -33,10 +30,22 @@
 #show heading.where( level: 4 ): it => block(width: 100%)[
   #set text(11pt,weight: "semibold"); #upper(it) #v(0.3em)
 ]
-#set heading(numbering: "1.1 ~ ")
+
+#show figure.caption: it => {
+  set align(left)
+  set par(justify: true)
+  it
+}
+
+#set heading(numbering: "1.1 \u{00B7}")
 
 #let serif-text(body) = {
   set text(font: "Source Serif 4 18pt", size: 11pt)
+  body
+}
+
+#let mono-text(body) = {
+  set text(font: "GeistMono NF", size: 9pt, weight: "medium")
   body
 }
 
@@ -79,11 +88,9 @@
 #pagebreak()
 
 #{
-  // set text(font: "GeistMono NFP", weight: "medium", size: 10pt)
   set text(font: "Geist", weight: "medium", size: 10pt)
   outline(depth:3, indent: auto)
 }
-
 #pagebreak()
 
 // ================================================================================================
@@ -92,7 +99,6 @@
 
 = Introduction And Theory
 
-// TODO: needs citation
 #serif-text()[
 The concept of intelligence, how it arises and what needs to be in place for it to occur, is
 probably been some of the longest standing questions in human history. How and if it can be
@@ -124,29 +130,32 @@ computational advantages of systems operating near critical states. The central 
 in identifying and abstracting the truly essential biological mechanisms for intelligence and
 efficiency, distinguishing core principles from intricate biological details that may not be
 necessary for artificial implementation. Concretly this thesis wants to
-// TODO: add or remove research questions
-
-  - Explore how information-flow based on sparse event might be implemented in a network, encoding
-  - Explore learning algorithms suitable for such a network
-
-In the succeeding sections we will lay down the theoretical foundations that we base our methods on
-
-_Established Methods_. We will get familiar with the current AI methods
-
-_Neuroscience 101_. Review neuroscience literature
-
-_Method_. Outline the methods and how you can recreate the work 
-
-_Results_. bla bla bla
-
-_Discussions_. blabla bla future work bla bla
 ]
 
-== Established Methods
+#block(fill:luma(245),stroke:(thickness:1pt, paint:luma(200)), inset: 10pt, radius: 4pt,
+  width: 100%,
+  [- *Explore how information-flow based on sparse events might be implemented in a network*]
+)
+#block(fill:luma(245),stroke:(thickness:1pt, paint:luma(200)), inset: 10pt, radius: 4pt,
+  width: 100%,
+  [- *Explore learning algorithms suitable for such a network*]
+)
+#serif-text()[
+In the succeeding sections we will lay down the theoretical foundations that we base our methods on
+
+@intro1.1 #sym.dot.c Established Artificial Intelligence we will get familiar with the current AI methods\
+@intro1.2 #sym.dot.c neuroscience 101 review neuroscience literature\
+@intro1.3[neuromorphic engineering] neuromorphic engineering\
+@method2[method] bla bla bla\
+@results3[results] blabla bla bla\
+@discussion4[discussion] blabla bla future work bla bla\
+]
+
+== Established Artificial Intelligence <intro1.1>
 
 // TODO: add explanation and ilustrations
 #box(
-width: 37%,
+width: 35%,
 serif-text()[
 The term Aritifical Inteligence forms an umbrella over many different techniques that make use
 of machines to do some intelligent task. The most promising way to acheive AI to day is trough
@@ -196,7 +205,7 @@ should be connected (attention, RNN, CNN, resnet)
 === Problems With The Established Methods
 
 #serif-text()[
-We mentioned in the introduction that the deep learning technique is ineficient compared to the
+It was mentioned in the introduction that the deep learning technique is ineficient compared to the
 brain. The reason why is not clear, from a hardware standpoint the brain simply has better hardware
 much more connections per area and the computation is baked into the hardware. From an algorithmic
 standpoint there may also be room for imporovement, In order to compute with deep learning and
@@ -212,7 +221,7 @@ eachother have to wait extreme quantization models (1bit) also highlight the ine
 ]
 // TODO: citations needed
 
-== Neuroscience 101
+== Neuroscience 101 <intro1.2>
 
 // TODO: add relevant theory here that we refrence to later, do not add stuff that
 // does not add important context nor future reference
@@ -259,7 +268,12 @@ glutamate. There are ion channels and some calsium idk.
 It is observed that neurons fire in short bursts called spikes. Experiments show that neurons fire
 repetably. A sequence of spikes is called a spike train, and exactly how information is encoded in a
 spike train is a topic of hot debate in neuroscience. A popular idea is that information is encoded
-in the average value of spikes per time called rate encoding
+in the average value of spikes per time called rate encoding. Temporal encoding
+the brain most likely uses a combination of all.
+The time to first spike encoding could be understood like this
+it is not about the absolute timing of the neurons rather a race of which spikes come first.
+the first connections would exite the post-synaptic neurons first and they should inhibit the others
+(lateral inhibition)
 ]
 
 === Learning
@@ -354,7 +368,9 @@ explicitly model individual spike events and their timing, offering a potentiall
 biologically plausible framework for computation than traditional MLPs.
 ]
 
-= Methodology
+== Neuromorphic engineering <intro1.3>
+
+= Methodology <method2>
 
 #figure(
   image("figures/spiketrain.svg"),
@@ -383,18 +399,42 @@ biologically plausible framework for computation than traditional MLPs.
 
 == Neuron Models
 
+#serif-text()[
 Leaky integrate and fire models seem the best bet, however complex dynamics like exponential
 decay and analog weights and potentials seem excessive, we might do without.
 Binary weights 1 for excitatory and and 0 for inhibitory. Stronger weights can be modeled
 with multiple parallel synapses
+]
 
 == Learning
 
 
+#figure(
+caption: [Unsupervised local learning rule for induvidual neurons. Based on STDP],
+supplement: [Algorithm],
+mono-text(pseudocode-list(hooks:.5em, indentation:1em, booktabs:true)[
++ start with a collection of neurons with arbitrary connections
++ *if* a pre-synaptic neuron fires *then*
+  + it has a chance to grow a synapse to a random post-synaptic neuron 
++ *if* a post-synaptic neuron fires *then*
+  + strengthen all connections to pre-synaptic neruons that fired before
+  + wither all connections to pre-synaptic neurons that did not fire, or fired after
+- 🛈 a neuron can be both pre-synaptic and post-synaptic
+]))
+
+#figure(
+caption: [Growing rules for synapses],
+supplement: [Algorithm],
+mono-text(pseudocode-list(hooks:.5em, indentation:1em, booktabs:true)[
++ probability of growing a synapse is inversely proportional to the amount it already has
++ earlier firings should get a better chance to grow synapses, although this is regulated by
+  inhibitory action
+]))
+
 == Network
 
-= Results
+= Results <results3>
 
-= Discussion
+= Discussion <discussion4>
 
 #bibliography("references.bib")

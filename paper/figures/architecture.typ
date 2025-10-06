@@ -2,7 +2,7 @@
 // #set page(width: auto, height: auto, margin: .5cm)
 
 // #show math.equation: block.with(fill: white, inset: 1pt)
-#set text(size: 10pt, font: "GeistMono NF")
+#set text(size: 9pt, font: "GeistMono NF", weight: "medium")
 
 #cetz.canvas({
   import cetz.draw: *
