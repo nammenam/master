@@ -25,9 +25,6 @@ label = pyglet.text.Label('SPIKING NEURAL NETWORK SIMULATOR V1',
                           x=window.width//2, y=window.height//2,
                           anchor_x='center', anchor_y='center')
 
-circle = Circle(x=100, y=150, radius=100, color=(50, 225, 30),batch=batch)
-square = Rectangle(x=200, y=200, width=200, height=200, color=(55, 55, 255),batch=batch)
-
 def neurons(num_neurons):
     neurons = []
     for i in range(num_neurons):
