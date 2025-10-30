@@ -89,9 +89,10 @@ rgb("FF5013"),
 
 #v(4em)
 #heading(level: 1,outlined: false,numbering: none)[ABSTRACT]
+#box([
 #serif-text()[
 #lorem(300)
-]
+]])
 #pagebreak()
 
 #heading(level: 1,outlined: false,numbering: none)[ACKNOWLEDGEMENTS]
