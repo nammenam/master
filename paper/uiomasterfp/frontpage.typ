@@ -1,33 +1,3 @@
-// typst: preview
-// -----------------------------------------------------------------
-// uiomasterfp.typ
-//
-// Conversion of the LaTeX uiomasterfp.sty package (v1.10) to Typst.
-// This template provides a function `uiomasterfp` to generate
-// the official UiO front page for master's and bachelor's theses.
-//
-// v1.2 - Corrected markup/code mode syntax error in `if` blocks.
-// -----------------------------------------------------------------
-
-// -------------------------------------------------
-// HOW TO USE
-// -------------------------------------------------
-//
-// #import "uiomasterfp.typ": uiomasterfp
-//
-// #show: doc => uiomasterfp(
-//   title: "My Amazing Thesis Title",
-//   author: "Your Name",
-//   lang: "eng",
-//   doc
-// )
-//
-// -------------------------------------------------
-
-
-// -------------------------------------------------
-// %% Languages
-// -------------------------------------------------
 #let strings = (
   eng: (
     faculty: "Faculty of Mathematics and Natural Sciences",
@@ -70,14 +40,14 @@
 // -------------------------------------------------
 // %% Font Sizes
 // -------------------------------------------------
+#let small-size = 12pt
 #let std-size = 14pt
-#let big-size = 20pt
+#let big-size = 18pt
 #let head-size = 32pt
-
 // -------------------------------------------------
 // %% Colours
 // -------------------------------------------------
-#let uiomfp-colors = (
+#let colors = (
   blue: (
     main: rgb(52.5%, 64.2%, 96.9%),
     light: rgb(90.2%, 92.5%, 100%),
@@ -104,261 +74,124 @@
   ),
 )
 
-// -------------------------------------------------
-// %% Helper function for text block on cover
-// -------------------------------------------------
 #let cover-text(
   title,
-  subtitle,
   author,
-  program,
-  sp,
-  sp-name,
-  dept,
-  fac,
-) = {
-  block(height: 18.7cm, {
-    // Content is pushed to the top (due to \vfill at end)
-    par(justify: false)[
-      #text(size: head-size, title)
-      #parbreak()
-
-      // Wrap markup content inside a code block `{...}` with brackets `[...]`
-      #if subtitle != none {
-        [
-          #text(size: std-size, subtitle)
-          #parbreak()
-        ]
-      }
-
-      #v(3.5em) // \uiomfp@luft x3
-
-      #text(size: std-size, weight: "bold", author)
-      #parbreak()
-      #v(1.2em)
-
-      #if program != none {
-        [
-          #text(size: std-size, program)
-          #parbreak()
-        ]
-      }
-
-      #if sp > 0 {
-        [
-          #text(size: std-size, "{sp} {sp-name}")
-          #parbreak()
-        ]
-      }
-
-      #v(1.2em)
-
-      #text(size: std-size, dept)
-      #parbreak()
-      #text(size: std-size, fac)
-    ]
-    v(1fr) // \vfill
-  })
-}
-
-// -------------------------------------------------
-// %% The main command
-// -------------------------------------------------
-#let uiomasterfp(
-  // --- Options ---
-  author: none,
-  bachelor: false,
-  binding: 0pt,
-  colophon: none,
-  color: "blue",
-  compact: false,
-  date: none,
-  dept: none,
-  fac: none,
-  font: "",
-  img: none,
-  info: "",
-  kind: none,
-  program: none,
-  sp: none,
   subtitle: none,
-  supervisor: none,
-  supervisors: none,
-  title: none,
-  words: none,
-  lang: "bm",
-  // --- Document Body ---
-  body
+  program: none,
+  sp: 2,
+  sp-name: "?",
+  co-sp-name: "?",
+  dept: "Departement of Informatics",
+  fac: "Faculty of Mathematics and Natural Sciences",
 ) = {
-  // --- Setup that DOESN'T need context ---
-  set text(font: font, size: std-size)
-  let s = strings.at(lang, default: strings.bm)
-  let c = uiomfp-colors.at(color, default: uiomfp-colors.blue)
-
-  // *** FIX HERE ***
-  // --- Logic that DOES need context ---
-  // Wrap all logic that depends on `document` in a context block.
-  context {
-    // --- Define variables that need context ---
-    let final-author = author
-    let final-title = title
-    let final-fac = fac
-    let final-dept = dept
-
-    let is-bachelor = bachelor
-    let (final-kind, final-sp, final-compact) = if is-bachelor {
-      (
-        s.bachelor-kind,
-        if sp == none { 0 } else { sp },
-        true,
-      )
-    } else {
-      (
-        if kind == none { s.thesis-kind } else { kind },
-        if sp == none { 60 } else { sp },
-        compact,
-      )
-    }
-
-    let final-date = if date == none {
-      let today = datetime.today()
-      let year = today.year()
-      let month = today.month()
-      let term = if month < 7 { s.spring } else { s.autumn }
-      "{term} {year}"
-    } else {
-      date
-    }
-
-    let bind-offset = 9.9mm + binding
-
-    // ---------------------------------
-    // %% Page I: The Cover
-    // ---------------------------------
-    page(
-      numbering: none,
-      background: rect(width: 100%, height: 100%, fill: c.light),
-      {
-        place(top + left, {
-          if img == none {
-            rect(width: 100%, height: 9.27cm, fill: c.main)
-          } else {
-            image(img, width: 100%, height: 9.27cm, fit: "cover")
-          }
-        })
-        place(top + left, dx: bind-offset, dy: 20.5mm, {
-          image("uio-fp-navn-" + "nn" + ".png", height: 12.8mm)
-        })
-        place(top + left, dx: bind-offset, dy: 80.1mm, {
-          rect(
-            fill: black,
-            outset: 3mm,
-            text(white, weight: "bold", " " + final-kind + " "),
-          )
-        })
-        place(bottom + left, dx: 176.4mm, dy: 9.9mm, {
-          image("uio-fp-segl.pdf", width: 23.7mm)
-        })
-        place(bottom + left, dx: bind-offset, dy: 9.9mm, {
-          text(size: std-size, final-date)
-        })
-        place(bottom + left, dx: bind-offset, dy: 9.9mm, {
-          cover-text(
-            final-title,
-            subtitle,
-            final-author,
-            program,
-            final-sp,
-            s.sp-name,
-            final-dept,
-            final-fac,
-          )
-        })
-      },
+  block(width:210mm, [
+    #text(size: head-size, weight: "bold",title)\
+    #if subtitle != none {[
+      #v(-.2em)
+      #text(size: big-size, subtitle)\
+    ]}
+    #v(.8em)
+    #text(size: std-size, weight: "semibold", author)
+    #v(2em)
+    #grid(columns: (38%,1fr), column-gutter: 0pt,
+    [
+      #block(width: 90%,[
+      #text(size: std-size, dept)\
+      #text(size: std-size, fac)])
+    ],
+    [
+      #block(width: 100%,[
+      #text(size: std-size, sp-name + " - " + "Supervisor")\
+      #if sp == 2 {[
+        #text(size: std-size, co-sp-name + " - " + "Co-Supervisor")
+      ]}
+      ])
+    ]
     )
-
-    // ---------------------------------
-    // %% Blank Page (if twoside)
-    // ---------------------------------
-    // if document.settings.twoside {
-    //   page(numbering: none, v(1fr))
-    // }
-
-    // ---------------------------------
-    // %% Page III: Inner Front Page
-    // ---------------------------------
-    if not final-compact {
-      page(
-        numbering: none,
-        align(center, {
-          v(1fr)
-          block(width: 100%, inset: (x: 2cm))[
-            #align(center)[
-              #text(size: std-size, weight: "bold", final-author)
-              #v(1cm)
-              #text(size: big-size, final-title)
-              #v(1cm)
-              #if subtitle != none [
-                #text(size: std-size, subtitle)
-              ]
-              #if words == none {
-                [#v(3fr)]
-              } else {
-                [
-                  #v(2fr)
-                  #text(size: std-size, "{words} {s.words}")
-                  #v(2fr)
-                ]
-              }
-              #if supervisor != none {
-                [
-                  #text(size: std-size, s.supervisor + ":")
-                  #parbreak()
-                  #text(size: std-size, supervisor)
-                  #v(0.5em)
-                ]
-              }
-              #if supervisors != none {
-                [
-                  #text(size: std-size, s.supervisors + ":")
-                  #parbreak()
-                  #text(size: std-size, supervisors)
-                  #v(1.0em)
-                ]
-              }
-              #text(size: std-size, info)
-            ]
-          ]
-          v(1fr)
-        }),
-      )
-
-      // ---------------------------------
-      // %% Page IV: Colophon Page
-      // ---------------------------------
-      if colophon != none {
-        page(
-          numbering: none,
-          align(left, {
-            v(1fr)
-            colophon
-          }),
-        )
-      // } else if document.settings.twoside {
-        // page(numbering: none, v(1fr))
-      }
+    #v(2cm)
+    #if program != none {
+      [
+        #text(size: std-size, program)
+        #parbreak()
+      ]
     }
-
-    // ---------------------------------
-    // %% Reset counter
-    // ---------------------------------
-    counter(page).update(1)
-  } // <-- End of context block
-
-  // ---------------------------------
-  // %% Show body
-  // ---------------------------------
-  // The 'body' (the document) is appended *after*
-  // the context-dependent title pages.
-  body
+    #v(1.2em)
+  ])
 }
+
+
+// This function inserts the cover page into the document
+#let cover(
+  uiosign: "04_uio_naventrekk_eng_pos.svg",
+  uiologo: "04_UiO_segl_pos.svg",
+  date: datetime.today().display(),
+  body-font: "Geist",
+  mono-font: "GeistMono NF",
+) = {
+  set page(margin: 0cm)
+  page(
+    grid(rows:2, columns:1,
+    block(height: 92.7mm, width: 100%,[
+      #place(top + left, rect(width: 100%, height: 100%, fill: colors.gray.main))
+      #place(top + left, dx: -14mm, dy: -14mm, image(uiosign, height: 6.2cm))
+      #place(bottom + left, dx: 14mm, dy: - 14mm,
+        rect(
+          fill: black,
+          outset: 3mm,
+          text(white, weight: "bold",size:small-size, "Master's Thesis"),
+        )
+      )
+    ]),
+    block(height: 204.3mm, width: 100%,[
+      #place(bottom + left, rect(width: 100%,height: 100%, fill: colors.gray.light))
+      #place(bottom + right, dx: 14mm, dy: 14mm, image(uiologo, width: 8.2cm))
+      #place(bottom + left, dx: 14mm, dy: -14mm, text(size: small-size,font:body-font, date))
+      #place(top + left, dx: 14mm, dy: 14mm,
+        cover-text(
+          "Neuromorphic Computing",
+          "Brage Wiseth",
+          subtitle: "With Spiking Neural Networks",
+          sp-name: "Philip Haflinger",
+          co-sp-name: "Yngve Hafting",
+        )
+      )
+    ])
+  ))
+}
+
+
+
+// #set page(
+//   fill: gradient.linear(rgb("FFDA50"),
+// rgb("FF5013"),
+//   angle:45deg),
+//   margin: (left: 2in),
+// )
+// #v(6cm)
+// #grid(columns: 2, column-gutter: 2em, align: left + horizon)[
+//   #line(end: (0em, 6cm), stroke:2pt)][
+//   #text(size: 32pt, weight: "black", style: "italic", font: "Geist" )[
+//     MACHINE LEARNING WITH SPIKES
+//   ]
+
+//   #text(font: "Geist", weight: "semibold",style: "italic")[
+//     Brage Wiseth\ Universitiy of Oslo\
+//     #datetime.today().display()
+//   ]]
+
+
+    //     place(bottom + left, dx: bind-offset, dy: 9.9mm, {
+    //       cover-text(
+    //         final-title,
+    //         subtitle,
+    //         final-author,
+    //         program,
+    //         final-sp,
+    //         s.sp-name,
+    //         final-dept,
+    //         final-fac,
+    //       )
+    //     })
+    //   },
+    // )

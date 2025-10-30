@@ -1,15 +1,13 @@
 #import "@preview/lovelace:0.3.0": pseudocode-list
 
 // CONFIG
-
-// #set text(font: "Source Serif 4 18pt", size: 11pt)
 #set text(font: "Geist", size: 10pt)
 #show math.equation : set text(font:"TeX Gyre Schola Math", size: 10.5pt)
 #show raw : set text(font:"GeistMono NF", weight: "medium", size:9pt)
 #set list(marker: sym.square.filled.small, indent: 1em)
-#show heading: set text(font:"Geist",weight: "bold", style:"italic")
+#show heading: set text(font:"Geist",weight: "bold", style:"normal")
 #show heading.where( level: 1 ): it => block(width: 100%)[
-  #set align(left + horizon); #set text(20pt)
+  #set align(left + horizon); #set text(24pt)
   #upper(it)
   #v(.8em)
 ]
@@ -19,7 +17,7 @@
   #v(.8em)
 ]
 #show heading.where( level: 3 ): it => block(width: 100%)[
-  #set text(12pt,weight: "semibold"); #upper(it) #v(0.3em)
+  #set text(12pt,weight: "semibold"); #upper(it) #v(0.4em)
 ]
 #show heading.where( level: 4 ): it => block(width: 100%)[
   #set text(11pt,weight: "semibold"); #upper(it) #v(0.3em)
@@ -35,7 +33,6 @@
 
 #let serif-text(body) = {
   set text(font: "Source Serif 4 18pt", size: 11pt)
-  // set text(font: "Geist", size: 11pt)
   body
 }
 
@@ -45,60 +42,34 @@
 }
 
 // FRONTPAGE
-
-#set page(
-  fill: gradient.linear(rgb("FFDA50"),
-rgb("FF5013"),
-  angle:45deg),
-  margin: (left: 2in),
-)
-#v(6cm)
-#grid(columns: 2, column-gutter: 2em, align: left + horizon)[
-  #line(end: (0em, 6cm), stroke:2pt)][
-  #text(size: 32pt, weight: "black", style: "italic", font: "Geist" )[
-    MACHINE LEARNING WITH SPIKES
-  ]
-
-  #text(font: "Geist", weight: "semibold",style: "italic")[
-    Brage Wiseth\ Universitiy of Oslo\
-    #datetime.today().display()
-  ]]
-#pagebreak()
-
- // #import "uiomasterfp/frontpage.typ": uiomasterfp
-
- // #show: doc => uiomasterfp(
- //   title: "My Amazing Thesis Title",
- //   subtitle: "An Incredible Subtitle",
- //   author: "Your Name",
- //   lang: "eng", // "eng", "bm", or "nn"
- //   color: "blue", // "blue", "orange", "pink", "green", "gray"
- //   bachelor: false,
- //   sp: 60,
- //   program: "Master of Informatics",
- //   supervisor: "Prof. Awesome",
- //   // colophon: [ ... content for colophon page ... ],
- //   doc
- // )
+#import "uiomasterfp/frontpage.typ": cover
+#cover()
 
 // ABSTRACT, ACKNOWLEDGEMENTS AND OUTLINE
-
 #set page(fill:none, margin:auto,numbering: "1")
 #set par(justify: true)
 #counter(page).update(1)
 
-#v(4em)
-#heading(level: 1,outlined: false,numbering: none)[ABSTRACT]
-#box([
+#v(25%)
+#align(center ,[
+#block(width:82%,[
+#align(left)[
+#text(weight:"semibold",size:16pt,[ABSTRACT])
+
 #serif-text()[
-#lorem(300)
-]])
+#lorem(200)
+]]])])
 #pagebreak()
 
-#heading(level: 1,outlined: false,numbering: none)[ACKNOWLEDGEMENTS]
+#v(25%)
+#align(center,[
+#block(width:82%,[
+#align(left)[
+#text(weight:"semibold",size:16pt,[ACKNOWLEDGEMENTS])
+
 #serif-text()[
-#lorem(40)
-]
+#lorem(80)
+]]])])
 #pagebreak()
 
 #{
@@ -107,59 +78,58 @@ rgb("FF5013"),
 }
 #pagebreak()
 
-// BODY
-
 = Introduction <intro>
 
 #serif-text()[
-Making machines more capable and intelligent is an ongoing perpetual struggle
-The concept of intelligence, how it arises and what needs to be in place for it to occur, is probably been some of the longest standing questions in human history. How and if it can be reproduced artificially is a particuarly hot topic today. Getting answers to these questions will not only help us understand our own minds but also brings the promise of unlocking new technology discovering new drugs or materials, it may be the last invention humans ever need to make. In recent years we have crept ever closer to answer some of these questions. New state of the art artificial inteligence systems have achieved remarkable success like the sophisticated language capabilities of GPT models and the protein-folding predictions of AlphaFold.
+Making machines more capable and intelligent is an ongoing perpetual struggle The concept of intelligence, how it arises and what needs to be in place for it to occur, is probably been some of the longest standing questions in human history. How and if it can be reproduced artificially is a particuarly hot topic today. Getting answers to these questions will not only help us understand our own minds but also brings the promise of unlocking new technology discovering new drugs or materials, it may be the last invention humans ever need to make. In recent years we have crept ever closer to answer some of these questions. New state of the art artificial inteligence systems have achieved remarkable success like the sophisticated language capabilities of GPT models and the protein-folding predictions of AlphaFold.
 
 Despite these triumphs, a significant gap persists between artificial systems and their biological counterparts. Evidently, these AI systems might posses superhuman capabilities in one or a few domains but none of them surpass humans in all, what we call Artificial General Inteligence (AGI). Also more relevant to this thesis is that current state-of-the-art ANNs, require vast amount of data, computatuon and energy resources. This demand stands in stark contrast to the biological brain---an extraordinarily complex and efficient organ estimated to operate on merely 20-30 Watts while also sitting comfortably in the AGI category. This profound difference in efficiency and capability suggests that contemporary ANN paradigms, might be missing or oversimplifying fundamental principles crucial for truly intelligent and scalable computation.
+
+#lorem(180)
+
+#lorem(180)
+
+#lorem(180)
 
 In this thesis we explore new approaches that first and foremost might solve the critical limitations of scalability and energy efficiency in artificial intelligence. But also hopefully lay the foundation for systems that might eventually unlock true AGI. This likely requires moving beyond current mainstream ANN architectures. We will explore the potential of incorporating more sophisticated biological principles into AI design. This involves investigating alternative computational paradigms, inspired by mechanisms such as sparse, event-driven processing observed in Spiking Neural Networks (SNNs), the role of temporal dynamics in neural coding, or the potential computational advantages of systems operating near critical states. The central challenge lies in identifying and abstracting the truly essential biological mechanisms for intelligence and efficiency, distinguishing core principles from intricate biological details that may not be necessary for artificial implementation. Concretly this thesis wants to
 ]
 
-// #serif-text()[
 #block(stroke:(thickness:1.5pt, paint:luma(50)), inset: 10pt, radius: 0pt,
-  width: 100%, [
+  width: 100%, [#text(weight:"semibold",[
   - Explore how information-flow based on sparse events might be implemented in a network
   - Explore learning algorithms suitable for such a network
-  ]
+  ])]
 )
-// ]
 
 #serif-text()[
-In the succeeding sections we will lay down the theoretical foundations that we base our methods on
-
-@intro1.1 #sym.dot.c Established Artificial Intelligence we will get familiar with the current AI methods\
-@intro1.2 #sym.dot.c neuroscience 101 review neuroscience literature\
-@intro1.3[neuromorphic engineering] neuromorphic engineering\
-@method2[method] bla bla bla\
-@results3[results] blabla bla bla\
-@discussion4[discussion] blabla bla future work bla bla\
+In the succeeding sections I will try to lay the foundations for neuromorphic engineering starting with background material covering early neroscience and developments of artificial neural networks based on simple models of the brain. In the neuroscience section we review modern neruscience literature and use concepts from that in the methodology section. 
 ]
 
+#pagebreak()
 
 = Background
 
+#serif-text()[
+In this section we will dive further into the background, cronological development interleaved with neuroscience
+]
+
+#v(2em)
 == the neuron in 1970
 
+#serif-text()[
+Early models of the neuron
+]
 
 == Established Artificial Intelligence <intro1.1>
 
 // TODO: add explanation and ilustrations
 #box(
-width: 35%,
+width: 49%,
 serif-text()[
-The term Aritifical Inteligence forms an umbrella over many different techniques that make use of machines to do some intelligent task. The most promising way to acheive AI to day is trough deep neural networks. The neural networks of today are almost exclusivly based on the simple perceptron neuron model. It is a fairly old idea based on a simple model on how the brain processes information. The model of the neuron that the is based on has synapses just like the biological
+The term Aritifical Inteligence forms an umbrella over many different techniques that make use of machines to do some intelligent task. The most promising way to acheive AI to day is trough deep neural networks. The neural networks of today are almost exclusivly based on the simple perceptron neuron model. It is a fairly old idea based on a simple model on how the brain processes information. The model of the neuron that the is based on has synapses just like the biological one, the synapses functions as inputs which when firing will exite the reciving neuron more or less depending on the strenth of the connection. If the reciving neuron get exited 
 ])
-#box(
-width: 62%,
-height: 7.5cm,
-// stroke: 1pt,
-inset: 1em,
-
+#h(2%)
+#box( width: 48%, height: 7cm,
 figure(
   include("figures/perceptron.typ"),
   caption: [
@@ -168,7 +138,7 @@ figure(
   ]
 ))
 #serif-text()[
-one, the synapses functions as inputs which when firing will exite the reciving neuron more or less depending on the strenth of the connection. If the reciving neuron get exited above a threshold it will fire and pass the signal downstream to another reciving neuron. Which is conceptually similar to how real neurons operate. This simple model is called a perceptron, which introduced a learning rule for a single computational neuron capable of classifying linearly separable patterns. However, to the MLP was the understanding that stacking multiple layers of these perceptron-like units could overcome these limitations by creating more complex decision boundaries. The critical breakthrough enabling the practical use of MLPs was the independent development and subsequent popularization of the backpropagation algorithm. Backpropagation provided an efficient method to calculate the gradient of the error function with respect to the network's weights, allowing for effective training of these deeper, multi-layered architectures. This combination---multiple layers of interconnected units
+above a threshold it will fire and pass the signal downstream to another reciving neuron. Which is conceptually similar to how real neurons operate. This simple model is called a perceptron, which introduced a learning rule for a single computational neuron capable of classifying linearly separable patterns. However, to the MLP was the understanding that stacking multiple layers of these perceptron-like units could overcome these limitations by creating more complex decision boundaries. The critical breakthrough enabling the practical use of MLPs was the independent development and subsequent popularization of the backpropagation algorithm. Backpropagation provided an efficient method to calculate the gradient of the error function with respect to the network's weights, allowing for effective training of these deeper, multi-layered architectures. This combination---multiple layers of interconnected units
 #footnote[
   While often conceptualized in layers (e.g., layers of the neocortex), the brain's connectivity is vastly more complex than typical feedforward ANNs, featuring extensive recurrent connections, feedback loops, and long-range projections that make a simple 'unrolling' into discrete layers an oversimplification
 ],
