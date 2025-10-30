@@ -120,8 +120,6 @@
   ])
 }
 
-
-// This function inserts the cover page into the document
 #let cover(
   uiosign: "04_uio_naventrekk_eng_pos.svg",
   uiologo: "04_UiO_segl_pos.svg",
@@ -146,8 +144,8 @@
     block(height: 204.3mm, width: 100%,[
       #place(bottom + left, rect(width: 100%,height: 100%, fill: colors.gray.light))
       #place(bottom + right, dx: 14mm, dy: 14mm, image(uiologo, width: 8.2cm))
-      #place(bottom + left, dx: 14mm, dy: -14mm, text(size: small-size,font:body-font, date))
-      #place(top + left, dx: 14mm, dy: 14mm,
+      #place(bottom + left, dx: 11mm, dy: -14mm, text(size: small-size,font:body-font, date))
+      #place(top + left, dx: 11mm, dy: 14mm,
         cover-text(
           "Neuromorphic Computing",
           "Brage Wiseth",
@@ -159,39 +157,3 @@
     ])
   ))
 }
-
-
-
-// #set page(
-//   fill: gradient.linear(rgb("FFDA50"),
-// rgb("FF5013"),
-//   angle:45deg),
-//   margin: (left: 2in),
-// )
-// #v(6cm)
-// #grid(columns: 2, column-gutter: 2em, align: left + horizon)[
-//   #line(end: (0em, 6cm), stroke:2pt)][
-//   #text(size: 32pt, weight: "black", style: "italic", font: "Geist" )[
-//     MACHINE LEARNING WITH SPIKES
-//   ]
-
-//   #text(font: "Geist", weight: "semibold",style: "italic")[
-//     Brage Wiseth\ Universitiy of Oslo\
-//     #datetime.today().display()
-//   ]]
-
-
-    //     place(bottom + left, dx: bind-offset, dy: 9.9mm, {
-    //       cover-text(
-    //         final-title,
-    //         subtitle,
-    //         final-author,
-    //         program,
-    //         final-sp,
-    //         s.sp-name,
-    //         final-dept,
-    //         final-fac,
-    //       )
-    //     })
-    //   },
-    // )
