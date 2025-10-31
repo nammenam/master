@@ -8,17 +8,17 @@
   import cetz.draw: *
 
   set-style(
-    stroke: (paint: rgb("838B92")),
-    fill: rgb("B3EBF2"),
+    stroke: (paint: rgb("101010")),
+    fill: rgb("D0D0D0"),
   )
-  rect((4,14),(rel:(1.2,1.2)),radius:15%, name:"r")
+  rect((4,8.5),(rel:(.8,.8)),radius:15%, name:"r")
   content((v => cetz.vector.add(v, (2, 0)), "r.east"), "= interconnect")
   set-style(
-    stroke: (paint: rgb("808080")),
-    fill: rgb("FFEE8C"),
+    stroke: (paint: rgb("101010")),
+    fill: rgb("909090"),
   )
 
-  rect((0,14),(rel:(1.2,1.2)),radius:15%, name:"r")
+  rect((0,8.5),(rel:(.8,.8)),radius:15%, name:"r")
   content((v => cetz.vector.add(v, (1, 0)), "r.east"), "= neuron")
   
   let pos_x = 0
@@ -26,16 +26,16 @@
   for i in range(8) {
     pos_y = 0
     if (calc.rem(i, 4) == 0 and (i > 0)) {
-      pos_x += 0.5
+      pos_x += 0.2
     }
     for j in range(8) {
       if (calc.rem(j, 4) == 0 and (j > 0)) {
-        pos_y += 0.5
+        pos_y += 0.2
       }
-      rect((pos_x,pos_y),(rel:(1.2,1.2)),radius:15%, name:"r")
-      pos_y += 1.5
+      rect((pos_x,pos_y),(rel:(.8,.8)),radius:15%, name:"r")
+      pos_y += 1.0
     }
-    pos_x += 1.5
+    pos_x += 1.0
   }
 
 })
