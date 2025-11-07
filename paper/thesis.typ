@@ -135,7 +135,7 @@ In the succeeding sections I will try to lay the foundations for neuromorphic en
 
 
 #serif-text()[
-The success of modern artificial intelligence is shadowed by an unsustainable efficiency crisis. This "power wall" is not an accident, but the direct consequence of a decades-long divergence between mainstream AI and its original biological inspiration. To fully understand the solution proposed in this thesis—neuromorphic computing—we must first trace this history. This chapter tells the story of the two "schools" of AI that emerged from a single, shared ancestor.
+The success of modern artificial intelligence is shadowed by an unsustainable efficiency crisis. This power wall is not an accident, but the direct consequence of a decades-long divergence between mainstream AI and its original biological inspiration. To fully understand the solution proposed in this thesis—neuromorphic computing—we must first trace this history. This chapter tells the story of the two "schools" of AI that emerged from a single, shared ancestor.
 
 We will begin at that shared origin point, a time when computer science and neuroscience were one and the same. We will then follow the "mainstream" path of deep learning to understand why it is so powerful but also how it became so inefficient. Finally, we will explore the "neuromorphic path," the modern neuroscience it is built upon, and the specific, unsolved challenges that this thesis confronts. We begin at the very beginning: the first formal attempt to mathematically model a biological neuron.
 ]
@@ -143,11 +143,49 @@ We will begin at that shared origin point, a time when computer science and neur
 #v(2em)
 == Early Computational Neuroscience
 
-#serif-text()[
-This is where you put your 1950s neuroscience. You establish the original ideas that both fields grew from. The Biological Neuron: Start with the basic "neuron doctrine" (Ramón y Cajal). The First Model (1943): Introduce the McCulloch-Pitts neuron. Explain it as the first attempt to mathematically model the neuron as a simple logic gate (sum inputs -> check threshold -> fire 1 or 0).   The First Learning Rule (1949): Introduce Hebb's Rule ("neurons that fire together, wire together"). Explain this is a local, decentralized learning rule. Chapter Conclusion: At this point, the fields of "AI" and "neuroscience" are one and the same.
+#serif-text()[ This is where you put your 1950s neuroscience. You establish the original ideas that both fields grew from. The Biological Neuron: Start with the basic "neuron doctrine" (Ramón y Cajal). The First Model (1943): Introduce the McCulloch-Pitts neuron. Explain it as the first attempt to mathematically model the neuron as a simple logic gate (sum inputs -> check threshold -> fire 1 or 0). The First Learning Rule (1949): Introduce Hebb's Rule ("neurons that fire together, wire together"). Explain this is a local, decentralized learning rule. Chapter Conclusion: At this point, the fields of "AI" and "neuroscience" are one and the same.
 
-#lorem(250)
+Before any computational model could be built, a fundamental biological question had to be answered: what is the brain made of? For centuries, the dominant theory was "reticular theory," which held that the brain was a single, continuous, fused network of tissue (a reticulum). This was definitively overturned by the meticulous work of Spanish neuroscientist Santiago Ramón y Cajal. Using novel staining techniques, he established the "neuron doctrine" at the turn of the 20th century, proving that the brain was composed of discrete, individual cells—the neurons—which acted as the fundamental units of the nervous system.
+
+This insight paved the way for the first true marriage of neuroscience and computation. In 1943, neurophysiologist Warren McCulloch and logician Walter Pitts published their seminal paper, "A Logical Calculus of the Ideas Immanent in Nervous Activity." They proposed the McCulloch-Pitts (M-P) neuron, the first mathematical model of a biological neuron.
+
+Their model was a radical simplification, but its genius was in that simplicity. It abstracted the neuron into a binary decision device:
+
+- It receives multiple binary inputs (either '1' for excitatory or '-1' for inhibitory).
+- It sums these inputs.
+- If the sum exceeds a fixed threshold, the neuron outputs a '1' (it "fires").
+- If the sum does not meet the threshold, it outputs a '0' (it remains "silent").
+
+By combining these simple units, McCulloch and Pitts demonstrated that they could construct any logical operation (AND, OR, NOT). This was a profound revelation: the brain's fundamental components could be modeled as simple logic gates. The M-P neuron was the common ancestor of both artificial intelligence and computational neuroscience. However, the M-P neuron was static; its connections were fixed. The next critical question was learning. In 1949, psychologist Donald Hebb provided the theoretical answer in his book The Organization of Behavior. He proposed a mechanism for how learning could occur in the brain, now famously summarized as "Hebb's Rule" or "Hebbian learning."
+
+The principle states:
+
+#block(stroke:(thickness:0pt, paint:luma(0)), inset: 10pt, radius: 0pt, fill: colors.gray.light,
+  width: 100%)[#text(weight:"medium")[
+"When an axon of cell A is near enough to excite a cell B and repeatedly or persistently takes part in firing it, some growth process or metabolic change takes place in one or both cells such that A's efficiency, as one of the cells firing B, is increased." @Placeholder
+]]
+
+In simpler terms: neurons that fire together, wire together. This was a local and decentralized learning rule. A synapse didn't need a "teacher" or a global error signal; it only needed to know if it successfully contributed to its post-synaptic neuron's firing. At this midpoint in the 20th century, the fields of artificial intelligence and neuroscience were one and the same. The pioneers were neuroscientists, logicians, and psychologists all working on a single problem: reverse-engineering the brain to understand, and eventually replicate, intelligence.
 ]
+
+#v(2em)
+== The Perceptron
+
+#serif-text()[ Now, you show the first engineering attempt to build a machine based on these ideas. Introduce Rosenblatt's Perceptron. Explain it as a direct hardware implementation of the McCulloch-Pitts neuron with a Hebbian-style learning rule. The "First Winter": Briefly explain its limitations (the "XOR problem" identified by Minsky & Papert). This is crucial because it creates the problem that the next generation of AI researchers had to solve. ] #box( width: 49%, serif-text()[ The term Artificial Intelligence forms an umbrella over many different techniques that make use of machines to do some intelligent task. The most promising way to achieve AI today is through deep neural networks. The neural networks of today are almost exclusively based on the simple perceptron neuron model. It is a fairly old idea based on a simple model of how the brain processes information. The model of the neuron that it is based on has "synapses" just like the biological one. The synapses function as inputs, each with a "weight" (strength). When inputs are active, they excite the receiving neuron more or less depending on the strength of this connection. ]) #h(2%) #box( width: 48%, height: 7cm, figure(   include("figures/perceptron.typ"),   caption: [   The perceptron---a simple model of how a neuron operates. Inputs xi​ get multiplied by weights wi​ and   summed. If the sum ∑wi​xi​ surpasses a threshold (or "bias" b), the neuron fires.   ] )) #serif-text()[ In 1957, psychologist Frank Rosenblatt took these theoretical ideas and created the first practical, engineered neural network: The Perceptron. It was a direct hardware implementation (the "Mark I Perceptron") of the McCulloch-Pitts neuron, but with one crucial addition: a trainable learning rule based on Hebb's ideas.
+
+As your text describes, this simple model sums its weighted inputs, and if the sum surpasses a threshold, it will fire and pass the signal downstream. Rosenblatt's key contribution was the perceptron learning rule, an algorithm that could automatically adjust the "weights" to learn. The machine was shown a pattern (e.g., a letter) and it would guess a classification. If the guess was wrong, the algorithm would slightly increase the weights of connections that "should" have fired and decrease the weights of those that fired incorrectly.
+
+The Perceptron was capable of classifying linearly separable patterns, and its creation sparked immense optimism. It was hailed as the first "thinking machine." However, this excitement was brought to an abrupt halt.
+
+In 1969, AI pioneers Marvin Minsky and Seymour Papert published their book Perceptrons, a rigorous mathematical analysis of the model's limitations. Their most famous critique was the "XOR problem." They proved that a single-layer perceptron could learn simple logic functions like AND or OR, but it was fundamentally incapable of learning the XOR (eXclusive OR) function. The problem is that the "true" and "false" cases for XOR cannot be separated by a single straight line, and a single perceptron is only capable of drawing a single line.
+
+This critique was devastating. It demonstrated that this simple model was a dead end for solving more complex, real-world problems. The book's impact led to a near-total collapse in neural network funding, an era now known as the "First AI Winter."
+
+This failure, however, created the very problem that the next generation of AI researchers had to solve, and it marks the beginning of the great divergence. Minsky and Papert themselves noted that a Multi-Layer Perceptron (MLP)—stacking multiple layers of these units—could theoretically solve the XOR problem by creating more complex decision boundaries. The challenge was that no one knew how to train it. Rosenblatt's rule only worked for a single layer.
+
+The critical breakthrough that solved this problem was the independent development and subsequent popularization of the backpropagation algorithm in the 1970s and 1980s. Backpropagation provided an efficient method to calculate the gradient of the error function with respect to all of the network's weights, even in deep layers, allowing for effective training.
+
+This combination—multiple layers of interconnected units (MLPs) trained via backpropagation—defines the architecture that became the foundation for the deep learning revolution. The neural networks of today, from the Convolutional Neural Networks (CNNs) that process images to the Transformers (like GPT) that handle language, all descend from this "mainstream" path. They are all, at their core, vast, multi-layer networks of simple perceptron-like units, trained with a variation of backpropagation. ]
 
 #v(2em)
 == The Perceptron
@@ -196,7 +234,21 @@ It was mentioned in the introduction that the deep learning technique is inefici
 == Birth Of Neuromorphic Computing
 
 #serif-text()[
-Now, you introduce your field as the "other path"—the one that stuck with the biology. **The "Father": Carver Mead (1980s): Explain that at the same time backpropagation was taking off, Carver Mead proposed a different path: instead of simulating simplified neurons on digital computers (like deep learning), we should emulate the analog physics of real neurons in silicon (VLSI).
+Now, you introduce your field as the "other path"—the one that stuck with the biology. The "Father": Carver Mead (1980s): Explain that at the same time backpropagation was taking off, Carver Mead proposed a different path: instead of simulating simplified neurons on digital computers (like deep learning), we should emulate the analog physics of real neurons in silicon (VLSI).
+
+While one branch of AI was abstracting the neuron into a mathematical function to be simulated on digital sequential processors (the von Neumann architecture), Caltech's Carver Mead saw a fundamental inefficiency. He observed that the digital simulation of neural processes was incredibly power-hungry, whereas the brain itself runs complex computations on just a few watts.
+
+In the 1980s, Mead proposed neuromorphic engineering. The core idea was not to *simulate* the logic of a neuron, but to *emulate* its physics. He championed using VLSI (Very-Large-Scale Integration) analog circuits to build artificial neurons and synapses directly in silicon.
+
+His key insight was to operate transistors in their "sub-threshold" regime—an analog, low-power state where their behavior (the relationship between current and voltage) is governed by the same exponential physics that dictates the flow of ions through a neuron's membrane.
+
+This approach offered several revolutionary advantages:
+* Co-location of Memory and Processing: In a von Neumann computer, data is constantly shuttled between the CPU and memory (the "von Neumann bottleneck"). In Mead's silicon neurons, the "memory" (the synaptic weight) is physically part of the same circuit as the "processor" (the neuron body), just as it is in the brain.
+* Massive Parallelism: Each silicon neuron and synapse operates in parallel, just like their biological counterparts.
+* Power Efficiency: By emulating the analog physics directly, these circuits could be thousands or even millions of times more power-efficient than a digital simulation of the same process.
+* Event-Driven: Like real neurons, these circuits were designed to be "event-driven," meaning they only consume power when a "spike" (an electrical pulse) actually occurs.
+
+Mead's early work, like the silicon retina, proved the concept. It was a chip that didn't just capture pixels, but processed visual information (like edge detection and motion) directly on the sensor in an analog, brain-inspired way. This marked the birth of a field dedicated to building hardware that *is* the network, rather than hardware that just *runs* a simulation of one.
 ]
 
 #v(2em)
@@ -204,17 +256,61 @@ Now, you introduce your field as the "other path"—the one that stuck with the 
 
 #serif-text()[
 This is where you put the rest of your neuroscience. Spiking Neurons: Explain how they are different from the simple "0 or 1" model. They are temporal and event-driven. They communicate with spikes. Biological Learning: Introduce Spike-Timing-Dependent Plasticity (STDP). Frame this as the biological alternative to backpropagation. It's a modern, measurable version of Hebb's rule that is local and temporal.
+
+The "other path" of neuromorphic computing is deeply intertwined with modern neuroscience, which has revealed that the simple perceptron model omits the most crucial computational ingredients of real neurons.
+
+#v(1em)
+=== Spiking Neurons
+The artificial neurons used in most deep learning models (like ReLU or sigmoid units) are static. They compute a weighted sum of their inputs, apply an activation function, and output a single, continuous value (like 0.83 or 5.2). This value is assumed to represent the neuron's "firing rate."
+
+Biological neurons don't work this way. They are spiking neurons, and their computation is:
+- Temporal: They integrate inputs over *time*. A neuron's internal state (its membrane potential) rises and falls based on when inputs arrive.
+- Event-Driven: They do not communicate with continuous values. They communicate using discrete, all-or-nothing electrical pulses called action potentials, or "spikes." A neuron only fires a spike when its internal potential crosses a specific threshold. 
+- Efficient: Because they are event-driven, they are sparse. A neuron spends most of its time silent, only consuming energy when it receives or sends a spike.
+
+In this model, information is not just in *how many* spikes there are (a rate code), but *when* they occur (a temporal code). A spike arriving a few milliseconds earlier or later can completely change the computational outcome.
+
+#v(1em)
+=== Biological Learning: Spike-Timing-Dependent Plasticity (STDP)
+This different model of computation requires a different model of learning. Deep learning's backpropagation is a "global" algorithm. To update a synapse in the first layer, you need an error signal calculated at the very last layer and propagated all the way back. This is highly effective but biologically implausible; there is no known mechanism for such a precise, "backward" error signal in the brain.
+
+Instead, the brain appears to use local learning rules. The most famous is Hebb's rule: "Neurons that fire together, wire together."
+
+A modern, measurable version of this principle is Spike-Timing-Dependent Plasticity (STDP). STDP is a learning rule that adjusts the strength (the "weight") of a synapse based purely on the *relative timing* of spikes between the pre-synaptic neuron (the sender) and the post-synaptic neuron (the receiver). 
+
+The rule is simple and local:
+- LTP (Long-Term Potentiation): If the pre-synaptic neuron fires *just before* the post-synaptic neuron (meaning it likely *contributed* to the firing), the connection between them is strengthened.
+- LTD (Long-Term Depression): If the pre-synaptic neuron fires *just after* the post-synaptic neuron (meaning it fired too late and did *not* contribute), the connection is weakened.
+
+This mechanism allows the network to learn correlations, causal relationships, and temporal patterns directly from the stream of incoming spikes, without any "supervisor" or global error signal. It is the biological alternative to backpropagation and a cornerstone of modern neuromorphic learning.
 ]
 
 #v(1em)
 === Neuron Models
 
 #serif-text()[
-Altough the perceptron captures common key aspects of biologial neuron models A lot is left on the table. A lot of progress and new ideas has surfaced since the invention of the perceptron. The simple neuron previously though to be simple like the perceptron model turns out to be more complex, the information encoding is also a key research topic not explored by older models. How to brain learn is also entirly different than what deep learning uses, changing the models and information encoding forces us to rethink how the learning algorithms in the brain works. Network architechture, fully asynchronus
-]
+The biological neuron is the fundamental building block of the brain. The biological neuron consists of a cell body also called the soma, which contains all of the core machinery that other cells have, like the nucleus and mitochondria. However, it also has distinct structures:
+- Dendrites: A branching "input" tree that receives signals from other neurons.
+- Axon: A long "output" cable (which can be over a meter long in humans) that transmits the neuron's own signal.
+- Synapses: The junctions where an axon's terminal meets another neuron's dendrite to pass the signal.
 
-#serif-text()[
-The neuron is the fundamental bulding block of the brain. Comprised of an axon synapses dendrites. When presynaptic neurons fire the postsynaptic neuron increaes in potential if it reaches a threshold it will itself fire. Neurons communicate with neurotransmitters such as dopmine and glutamate. There are ion channels and some calsium idk. A lot of work has been put into modeling the neuron. The best models we have today are the generalized Leaky Integrate and Fire model (LIF)
+When pre-synaptic neurons fire, they release neurotransmitters (like glutamate or dopamine) across the synapse. These chemicals open ion channels on the post-synaptic neuron, causing its internal electrical potential (the "membrane potential") to increase. If this potential, which is integrated over time, reaches a critical threshold, the neuron itself fires an action potential (a spike) down its axon.
+
+Although the perceptron captures the basic idea of "integrating inputs to make a decision," a lot is left on the table. A lot of progress and new ideas have surfaced since its invention. The neuron, once thought to be a simple switch, turns out to be a complex computational device.
+
+This forces us to rethink everything:
+- Information Encoding: How is information represented? Is it in the *rate* of spikes, the *precise timing* of the first spike, or in correlations between *patterns* of spikes? This is a key research topic not explored by older models.
+- Learning Rules: How does the brain learn? It is entirely different from what deep learning uses. The brain's learning is local (like STDP) and continuous.
+- Network Architecture: The brain isn't a simple feed-forward stack of layers. It is a deeply recurrent, complex, and fully asynchronous graph where signals propagate at their own speed.
+
+A lot of work has been put into modeling the neuron. The most biologically realistic models, like the Hodgkin-Huxley model, are incredibly complex and computationally expensive, simulating the precise dynamics of multiple ion channels.
+
+For most neuromorphic computing, a balance is struck with simpler, more efficient models. The most popular are the Leaky Integrate-and-Fire (LIF) models.
+- Integrate: The model's potential rises as it receives input spikes (summing their weights).
+- Leaky: The potential "leaks" away over time, modeling the neuron's tendency to return to its resting state.
+- Fire: If the potential crosses the threshold, it fires a spike and its potential is reset.
+
+The Generalized Leaky Integrate-and-Fire (GLIF) and other variants (like the Izhikevich model) are the best models we have today for large-scale, efficient simulation. They add more biological realism (like adaptation, where a neuron's firing rate slows over time) without the extreme computational cost of full biophysical models.
 ]
 
 #v(1em)
@@ -316,10 +412,18 @@ Some neurons have other properties like bursting modes or continuous firing once
 
 Inhibition should make a neuron not fire
 
+$ T = sum w/t $
+
 In a time to first spike scheme of we care about the order (the relative values since information is stored in time and order) we have to use weights and a neuron model that distinguish between inputs arriving earlier than others. I present a scheme where the first neuron that arrives starts a linear count where the slope of the counter is the weight additional inputs will increase or decrease the slope according to their weight. We can see that neurons arriving earlier will get more time to increase the counter and thus will carry a higher value. If the counter reaches a threshold the neuron will fire. The astute will notice that in this scheme the neuron will fire even for the smallest stimulus since the counter will count up a non zero value and eventually reach the threshold, to mitigate this we can simply say that if the counter is too slow the neuron will not fire we will see later that this scheme satisfies the criteria above.
 
 The problem with this decoding is for strong stimuli we would ideally make the neuron respond immediately and fire, but it has to wait until the counter has reached the threshold to fix this we can also add the weight of the input directly to the potential while also starting a counter. Now if early strong inputs arrive they will fill up the potential and make the neuron fire almost immediately. Small inputs wil take some time 
 ]
+
+#figure(
+  include("figures/neuronmodel.typ"),
+  caption: [Proposed simplifed layout of a SNN. The neurons are connected with hirearcical busses
+  that allow for the network to be configured as a _small world network_]
+)
 
 
 #serif-text()[

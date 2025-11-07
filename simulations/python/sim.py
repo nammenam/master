@@ -86,11 +86,11 @@ SYNAPSE_DELAY = 1.0 # 5ms delay
 
 # --- New Growth Rule Constants ---
 # Rule 1: "post neuron has a small chance to grow unconditionally if it has no connections"
-UNCONDITIONAL_GROWTH_PROB = 0.05 # 5% chance per update() tick
+UNCONDITIONAL_GROWTH_PROB = 0.01 # 5% chance per update() tick
 
 # Rule 2: "if a post neuron has a connection and any pre neuron... fire it has a greater chance"
-ASSOCIATIVE_GROWTH_PROB = 0.1  # 10% chance when a post-neuron is spiked
-SPIKE_HISTORY_WINDOW = 20.0  # 20ms time window to be "co-active"
+ASSOCIATIVE_GROWTH_PROB = 0.4  # 10% chance when a post-neuron is spiked
+SPIKE_HISTORY_WINDOW = 1.0  # 20ms time window to be "co-active"
 
 
 class Simulation:
@@ -151,9 +151,6 @@ class Simulation:
             self.now_time = event_time 
             newly_spiked_indices.append(target_idx)
 
-            # --- 7. Implement new logic based on event_type ---
-            
-            # --- Event Type 'FF' (Input Pre-Neuron Spike) ---
             if event_type == 'FF':
                 pre_idx = target_idx
                 # Add this spike to our short-term memory

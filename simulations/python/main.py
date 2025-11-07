@@ -9,6 +9,8 @@ from pyglet.window import mouse
 from pyglet.shapes import Circle, Rectangle, Line
 from config import NETWORK_SHAPE, WINDOW_HEIGHT, WINDOW_WIDTH, X_MARGIN, LAYER_SPACING
 
+NODE_C = 64
+EDGE_C = 128
 
 # --- Import the simulation code ---
 import threading
@@ -58,17 +60,18 @@ def get_neuron_coords(neuron_index):
     # Unknown
     return -1, -1
 
-def draw_neurons(batch):
+def draw_neurons(batch, group):
     circles = []
     # Use our new helper function!
     for i in range(NETWORK_SHAPE[0] + NETWORK_SHAPE[1]):
         neuron_x, neuron_y = get_neuron_coords(i)
         if neuron_x != -1:
-            new_circle = Circle(x=neuron_x, y=neuron_y, radius=3, color=(64, 64, 64), batch=batch)
+            new_circle = Circle(x=neuron_x, y=neuron_y, radius=3,
+                                color=(NODE_C, NODE_C, NODE_C), batch=batch, group=group)
             circles.append(new_circle)
     return circles
 
-playback_speed = 10
+playback_speed = 20
 # image_path = 'data/doomguy.jpg'
 # image_path = 'data/lenna.png'
 # original_image = Image.open(image_path)
@@ -97,7 +100,9 @@ sim = Simulation(data)
 image = np_to_pyglet_image(data[0])
 center_image(image)
 batch = pyglet.graphics.Batch()
-neurons = draw_neurons(batch)
+background_group = pyglet.graphics.Group(order=0)
+foreground_group = pyglet.graphics.Group(order=1)
+neurons = draw_neurons(batch, foreground_group)
 connections = {}
 label = pyglet.text.Label('SPIKING NEURAL NETWORK SIMULATOR V1',
                           font_name='GeistMono NF Medium',
@@ -109,6 +114,11 @@ time_label = pyglet.text.Label('',
                           font_size=11,
                           x=window.width-20, y=20,
                           anchor_x='right', anchor_y='center')
+input_label = pyglet.text.Label('input image:',
+                          font_name='GeistMono NF Medium',
+                          font_size=11,
+                          x=window.width-140, y=window.height - 20,
+                          anchor_x='right', anchor_y='center')
 
 
 
@@ -119,17 +129,16 @@ def update(dt):
         return
 
     spiked_indices, grown_synapses, is_empty = sim.advance(time_slice)
-    
     if is_empty:
         sim.next_data(data)
         update_image(data[sim.iteration], image)
     
     for neuron in neurons:
-        if neuron.color != (64, 64, 64):
+        if neuron.color != (NODE_C, NODE_C, NODE_C):
             neuron.color = (
-                max(64, neuron.color[0] - 5), 
-                max(64, neuron.color[1] - 5),
-                max(64, neuron.color[2] - 5)
+                max(NODE_C, neuron.color[0] - 5), 
+                max(NODE_C, neuron.color[1] - 5),
+                max(NODE_C, neuron.color[2] - 5)
             )
 
     for idx in spiked_indices:
@@ -140,11 +149,9 @@ def update(dt):
         if (pre_idx, post_idx) not in connections:
             pre_x, pre_y = get_neuron_coords(pre_idx)
             post_x, post_y = get_neuron_coords(post_idx)
-            
             new_line = Line(pre_x, pre_y, post_x, post_y,
-                            thickness=1, color=(100, 100, 255, 128), # Blue-ish synapse
-                            batch=batch)
-            
+                            thickness=2, color=(EDGE_C, EDGE_C, EDGE_C, 64), # Blue-ish synapse
+                            batch=batch, group=background_group)
             connections[(pre_idx, post_idx)] = new_line
     time_label.text = f'{sim.now_time:.2f}ms'
 
@@ -169,6 +176,7 @@ def on_draw():
     image.blit(window.width - 64, window.height - 64)
     label.draw()
     time_label.draw()
+    input_label.draw()
     batch.draw()
 
 pyglet.clock.schedule_interval(update, 1/120)
