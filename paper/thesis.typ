@@ -1,10 +1,14 @@
 #import "@preview/droplet:0.3.1": dropcap
 #import "@preview/wordometer:0.1.5": word-count, total-words
 #import "@preview/lovelace:0.3.0": pseudocode-list
+#import "@preview/glossarium:0.5.9": make-glossary, register-glossary, print-glossary, gls, glspl
+#import "uiomasterfp/frontpage.typ": cover
+#import "uiomasterfp/frontpage.typ": colors
+#import "glossary.typ": entry-list
 
-
-// CONFIG
+#show: make-glossary
 #show: word-count
+
 #set text(font: "Geist", size: 10pt)
 #show math.equation : set text(font:"TeX Gyre Schola Math", size: 10.5pt)
 #show raw : set text(font:"GeistMono NF", weight: "medium", size:9pt)
@@ -46,9 +50,12 @@
   body
 }
 
+#let box-text(body) = {
+block(stroke:(thickness:0pt, paint:luma(0)), inset: 10pt, radius: 0pt, fill: colors.gray.light,
+  width: 100%)[#text(weight:"medium", font:"Geist", size:10pt,body)]
+}
+
 // FRONTPAGE
-#import "uiomasterfp/frontpage.typ": cover
-#import "uiomasterfp/frontpage.typ": colors
 #cover()
 
 // ABSTRACT, ACKNOWLEDGEMENTS AND OUTLINE
@@ -79,7 +86,7 @@ context { counter(page).display("1") })))
   #text(weight:"semibold",size:16pt,[ACKNOWLEDGEMENTS])
 
   #serif-text()[
-    #lorem(80)
+    #lorem(78)
   ]]
 ]]
 
@@ -97,16 +104,13 @@ Wordcount: #total-words
 
 #pagebreak()
 
-#v(2em)
 #heading(outlined: false, numbering: none, level: 1)[GLOSSARY]
 #{
-  set text(font: "Geist", weight: "medium", size: 10pt)
-  table(stroke:(thickness:0pt),
-  [LIF #sym.bullet Leaky Integrate And Fire #sym.bullet 1, 14, 30],
-  [ANN --- Artificial Neural Network],
-  [SNN --- Spiking Neural Network],
-  [AI --- Artificial Intelligence]
-  )
+set text(font: "Geist", weight: "medium", size: 10pt)
+register-glossary(entry-list)
+print-glossary(
+ entry-list
+)
 }
 
 #pagebreak()
@@ -114,23 +118,33 @@ Wordcount: #total-words
 = Introduction <intro>
 
 #serif-text()[
-Making intelligent machines has been a long standing goal for many. The concept of intelligence,how it arises and what needs to be in place for it to occur, is probably been some of the longest standing questions in human history. How and if it can be reproduced artificially is a particuarly hot topic today. Getting answers to these questions will not only help us understand our own minds but also brings the promise of unlocking new technology discovering new drugs or materials, it may be the last invention humans ever need to make. In recent years we have crept ever closer to answer some of these questions. Artificial intelligence (AI) is in the midst of a revolution. Deep Learning, a computational approach based on multi-layered artificial neural networks, has achieved superhuman performance in domains ranging from protein folding and medical diagnostics to natural language translation. This success is bringing a lot of attention to AI, and cementing it's place as a transformative tool, but it has also revealed a fundamental and unsustainable flaw.
+The quest to create intelligent machines is one of humanity's oldest and most profound ambitions, spanning the realms of philosophy, mathematics, and engineering. It is intertwined with our deepest questions: What is the nature of intelligence, how does it emerge from inert matter, and can we, its creators, reproduce it artificially? Today, this ancient quest is no longer confined to speculation. We are at the heart of a technological revolution that places this question at the center of our scientific and economic lives. Answering it promises not only to unlock a deeper understanding of our own minds but also to yield transformative tools—from hyper-personalized medicine and the discovery of novel materials to automated scientific discovery. It may, as some have suggested, be the last invention humans ever need to make.
 
-The sucess of modern deep learning comes at a staggering computational cost. The training of a single state-of-the-art language model can consume megawatts of power @Placeholder, emitting a carbon footprint equivalent to the lifetime of several cars. Furthermore It needs a lot of data ... New evidence suggests that deep learing is at intellignet as first thought ... This hunger for power and data as well as limited learning should be a wake up call to rethink the architectural decisions at the heart of modern AI. In stark contrast, the human brain—the "gold standard" of efficient intelligence—performs the same complex tasks on a mere 20 watts of power, seamlessly integrating computation and memory at the synaptic level. This vast disparity proves that while our models are powerful, our paradigm is inefficient. We are building supercomputers to simulate intelligence rather than building efficient, intelligent machines. We are running brain-inspired algorithms on hardware that is not brain-like. Suggests that contemporary ANN paradigms, might be missing or oversimplifying fundamental principles crucial for truly intelligent and scalable computation.
+In recent years, @ai has experienced a "Big Bang" moment. Deep Learning, a computational approach built on multi-layered @ann, has broken one performance barrier after another. It has achieved demonstrably superhuman results in domains once thought to be the exclusive purview of human intuition, from the intricate protein folding of AlphaFold to the complex, emergent strategies of Go and the stunning fluency of large-scale language models. This wave of success has cemented #gls("ai",display:"AI's") place as a general-purpose technology, poised to reshape every corner of society.
 
-Today's systems are built on the 80-year-old von Neumann architecture, which creates a "memory bottleneck by physically separating processing and memory ...
+However, beneath the surface of this explosive progress, a fundamental and unsustainable flaw has been exposed. The triumph of modern deep learning is built on a paradigm of brute force, and we are beginning to hit the wall. This "success" comes at a staggering, and rapidly inflating, computational cost. The training of a single state-of-the-art model can consume megawatts of power, emitting a carbon footprint equivalent to the lifetime of several cars. This isn't a problem that can be solved with slightly better chips; it's an architectural crisis.
 
-Next generation of AI should mimic the brain more and the hardware should bake in these computations directly ...
+This voracious hunger for power is matched by an insatiable appetite for data. These models demand planet-scale datasets, which are increasingly difficult to source, curate, and maintain. Worse still, new evidence suggests that this brute-force approach may be yielding diminishing returns on intelligence. Despite their superhuman acuity in narrow tasks, these models often prove to_be brittle, statistically-driven correlation engines. They show a profound lack of common-sense reasoning, struggle with robust out-of-distribution generalization, and can fail in spectacularly simple, non-human ways.
 
-In this thesis we explore new approaches that first and foremost might solve the critical limitations of scalability and energy efficiency in artificial intelligence. But also hopefully lay the foundation for systems that might eventually unlock true AGI. This likely requires moving beyond current mainstream ANN architectures. We will explore the potential of incorporating more sophisticated biological principles into AI design. This involves investigating alternative computational paradigms, inspired by mechanisms such as sparse, event-driven processing observed in Spiking Neural Networks (SNNs), the role of temporal dynamics in neural coding, or the potential computational advantages of systems operating near critical states. The central challenge lies in identifying and abstracting the truly essential biological mechanisms for intelligence and efficiency, distinguishing core principles from intricate biological details that may not be necessary for artificial implementation. Concretly this thesis wants to
+This triad of challenges—spiraling energy costs, insatiable data demands, and limited, "un-intelligent" learning—should be a definitive wake-up call. We are building digital supercomputers to simulate intelligence rather than building efficient, intelligent machines. The very hardware we use is part of the problem. We are running brain-inspired algorithms on an architecture that is fundamentally not brain-like. Today's systems are built on the 80-year-old von Neumann architecture, a relic of serial computation now forced to handle a massively parallel problem. This design creates the infamous "memory bottleneck" by physically separating processing and memory, forcing the system to waste the vast majority of its time and energy shuttling data between the two.
+
+In stark, almost humbling contrast, the human brain—our "gold standard" of efficient intelligence—performs tasks of far greater complexity on a mere 20 watts of power. It doesn't just "think"; it simultaneously manages a complex biological system, processes a continuous flood of multi-sensory data, and navigates a dynamic world in real-time. It achieves this miracle of efficiency by being a completely different kind of computer. It has no separation between memory and processing; computation is the memory, integrated at the synaptic level. It is a massively parallel, low-power system that thrives on sparse, event-driven communication.
+
+This vast disparity proves that while our models are potent, our paradigm is profoundly inefficient. It suggests that contemporary @ann:pl, and the hardware they run on, are missing or disastrously oversimplifying the fundamental principles that make biological intelligence so scalable and robust.
+
+The path forward must therefore be one of biological inspiration, not just in theory but in practice. The next generation of @ai must mimic the brain's architectural and computational strategies more closely, and our hardware must be rebuilt to bake these computations in directly.
+
+In this thesis, we explore new approaches that, first and foremost, might solve the critical limitations of scalability and energy efficiency in artificial intelligence. But more hopefully, they may lay the foundation for systems that can move beyond statistical mimicry and unlock a more robust, generalizable, and truly cognitive AGI.
+
+This likely requires moving beyond the current mainstream of dense, synchronous ANNs. We will explore the potential of incorporating more sophisticated biological principles into @ai design. This involves investigating alternative computational paradigms inspired by the brain's own solutions: mechanisms such as the sparse, event-driven processing seen in Spiking Neural Networks @snn; the crucial role of temporal dynamics in neural coding; or the potential computational advantages of systems operating near critical states.
+
+The central challenge, and the focus of this work, lies in identifying and abstracting the truly essential biological mechanisms—distinguishing the core principles of computation from the intricate biological details that may not be necessary for an artificial implementation. Concretely, this thesis aims to
 ]
 
-#block(stroke:(thickness:0pt, paint:luma(0)), inset: 10pt, radius: 0pt, fill: colors.gray.light,
-  width: 100%)[#text(weight:"medium")[
+#box-text()[
   - Explore how information-flow based on sparse events might be implemented in a network
   - Explore learning algorithms suitable for such a network
-]]
-
+]
 
 #serif-text()[
 In the succeeding sections I will try to lay the foundations for neuromorphic engineering starting with background material covering early neroscience and developments of artificial neural networks based on simple models of the brain. In the neuroscience section we review modern neruscience literature and use concepts from that in the methodology section. 
@@ -142,7 +156,7 @@ In the succeeding sections I will try to lay the foundations for neuromorphic en
 
 
 #serif-text()[
-The success of modern artificial intelligence is shadowed by an unsustainable efficiency crisis. This power wall is not an accident, but the direct consequence of a decades-long divergence between mainstream AI and its original biological inspiration. To fully understand the solution proposed in this thesis—neuromorphic computing—we must first trace this history. This chapter tells the story of the two "schools of AI that emerged from a single, shared ancestor.
+The success of modern artificial intelligence is shadowed by an unsustainable efficiency crisis. This power wall is not an accident, but the direct consequence of a decades-long divergence between mainstream @ai and its original biological inspiration. To fully understand the solution proposed in this thesis—neuromorphic computing—we must first trace this history. This chapter tells the story of the two "schools of @ai that emerged from a single, shared ancestor.
 
 We will begin at that shared origin point, a time when computer science and neuroscience were one and the same. We will then follow the "mainstream" path of deep learning to understand why it is so powerful but also how it became so inefficient. Finally, we will explore the "neuromorphic path," the modern neuroscience it is built upon, and the specific, unsolved challenges that this thesis confronts. We begin at the very beginning: the first formal attempt to mathematically model a biological neuron.
 ]
@@ -150,27 +164,27 @@ We will begin at that shared origin point, a time when computer science and neur
 #v(2em)
 == Early Computational Neuroscience
 
-#serif-text()[ This is where you put your 1950s neuroscience. You establish the original ideas that both fields grew from. The Biological Neuron: Start with the basic "neuron doctrine" (Ramón y Cajal). The First Model (1943): Introduce the McCulloch-Pitts neuron. Explain it as the first attempt to mathematically model the neuron as a simple logic gate (sum inputs -> check threshold -> fire 1 or 0). The First Learning Rule (1949): Introduce Hebb's Rule ("neurons that fire together, wire together"). Explain this is a local, decentralized learning rule. Chapter Conclusion: At this point, the fields of "AI" and "neuroscience" are one and the same.
-
+#serif-text()[
 Before any computational model could be built, a fundamental biological question had to be answered: what is the brain made of? For centuries, the dominant theory was "reticular theory," which held that the brain was a single, continuous, fused network of tissue (a reticulum). This was definitively overturned by the meticulous work of Spanish neuroscientist Santiago Ramón y Cajal. Using novel staining techniques, he established the "neuron doctrine" at the turn of the 20th century, proving that the brain was composed of discrete, individual cells—the neurons—which acted as the fundamental units of the nervous system.
 
 This insight paved the way for the first true marriage of neuroscience and computation. In 1943, neurophysiologist Warren McCulloch and logician Walter Pitts published their seminal paper, "A Logical Calculus of the Ideas Immanent in Nervous Activity." They proposed the McCulloch-Pitts (M-P) neuron, the first mathematical model of a biological neuron.
 
 Their model was a radical simplification, but its genius was in that simplicity. It abstracted the neuron into a binary decision device:
 
+#box-text()[
 - It receives multiple binary inputs (either '1' for excitatory or '-1' for inhibitory).
 - It sums these inputs.
 - If the sum exceeds a fixed threshold, the neuron outputs a '1' (it "fires").
 - If the sum does not meet the threshold, it outputs a '0' (it remains "silent").
+]
 
 By combining these simple units, McCulloch and Pitts demonstrated that they could construct any logical operation (AND, OR, NOT). This was a profound revelation: the brain's fundamental components could be modeled as simple logic gates. The M-P neuron was the common ancestor of both artificial intelligence and computational neuroscience. However, the M-P neuron was static; its connections were fixed. The next critical question was learning. In 1949, psychologist Donald Hebb provided the theoretical answer in his book The Organization of Behavior. He proposed a mechanism for how learning could occur in the brain, now famously summarized as "Hebb's Rule" or "Hebbian learning."
 
 The principle states:
 ]
-#block(stroke:(thickness:0pt, paint:luma(0)), inset: 10pt, radius: 0pt, fill: colors.gray.light,
-  width: 100%)[#text(weight:"medium")[
+#box-text()[
 "When an axon of cell A is near enough to excite a cell B and repeatedly or persistently takes part in firing it, some growth process or metabolic change takes place in one or both cells such that A's efficiency, as one of the cells firing B, is increased." @Placeholder
-]]
+]
 
 #serif-text()[
 In simpler terms: neurons that fire together, wire together. This was a local and decentralized learning rule. A synapse didn't need a "teacher" or a global error signal; it only needed to know if it successfully contributed to its post-synaptic neuron's firing. At this midpoint in the 20th century, the fields of artificial intelligence and neuroscience were one and the same. The pioneers were neuroscientists, logicians, and psychologists all working on a single problem: reverse-engineering the brain to understand, and eventually replicate, intelligence.
@@ -179,43 +193,27 @@ In simpler terms: neurons that fire together, wire together. This was a local an
 #v(1em)
 === The Perceptron
 
-#serif-text()[ Now, you show the first engineering attempt to build a machine based on these ideas. Introduce Rosenblatt's Perceptron. Explain it as a direct hardware implementation of the McCulloch-Pitts neuron with a Hebbian-style learning rule. The "First Winter": Briefly explain its limitations (the "XOR problem" identified by Minsky & Papert). This is crucial because it creates the problem that the next generation of AI researchers had to solve.
-]
-#box(width: 49%)[#serif-text()[
-The term Artificial Intelligence forms an umbrella over many different techniques that make use of machines to do some intelligent task. The most promising way to achieve AI today is through deep neural networks. The neural networks of today are almost exclusively based on the simple perceptron neuron model. It is a fairly old idea based on a simple model of how the brain processes information. The model of the neuron that it is based on has "synapses" just like the biological one. The synapses function as inputs, each with a "weight" (strength). When inputs are active, they excite the receiving neuron more or less depending on the strength of this connection
+#box(width: 48%)[#serif-text()[
+In 1957, psychologist Frank Rosenblatt took these theoretical ideas and created the first practical, engineered neural network: The Perceptron. It was a direct hardware implementation (the "Mark I Perceptron") of the McCulloch-Pitts neuron, but with one crucial addition: a trainable learning rule based on Hebb's ideas. Rosenblatt's key contribution was the perceptron learning rule, an algorithm that could automatically adjust the weights to learn. The machine was shown a pattern (e.g., a letter) and it would guess a classification. If the guess was wrong, the algorithm would slightly increase the weights of connections that should have fired and decrease the weights of those that fired incorrectly. The Perceptron was capable of classifying linearly separable patterns, and
 ]]
 #h(2%)
-#box(width: 48%, height: 7cm)[
+#box(width: 48%, height: 8cm)[
 #figure(include("figures/perceptron.typ"),caption:[The perceptron---a simple model of how a neuron operates. Inputs $x_i$ get multiplied by weights $w_i$ and summed. If the sum $∑ w_i x_i$ surpasses a threshold (or "bias" $b$), the neuron fires.
 ])]
-
 #serif-text()[
-In 1957, psychologist Frank Rosenblatt took these theoretical ideas and created the first practical, engineered neural network: The Perceptron. It was a direct hardware implementation (the "Mark I Perceptron") of the McCulloch-Pitts neuron, but with one crucial addition: a trainable learning rule based on Hebb's ideas.
-As your text describes, this simple model sums its weighted inputs, and if the sum surpasses a threshold, it will fire and pass the signal downstream. Rosenblatt's key contribution was the perceptron learning rule, an algorithm that could automatically adjust the "weights" to learn. The machine was shown a pattern (e.g., a letter) and it would guess a classification. If the guess was wrong, the algorithm would slightly increase the weights of connections that "should" have fired and decrease the weights of those that fired incorrectly.
+its creation sparked immense optimism. It was hailed as the first "thinking machine." However, this excitement was brought to an abrupt halt. In 1969, @ai pioneers Marvin Minsky and Seymour Papert published their book Perceptrons, a rigorous mathematical analysis of the model's limitations. Their most famous critique was the "XOR problem." They proved that a single-layer perceptron could learn simple logic functions like AND or OR, but it was fundamentally incapable of learning the @xor function. The problem is that the "true" and "false" cases for XOR cannot be separated by a single straight line, and a single perceptron is only capable of drawing a single line.
 
-The Perceptron was capable of classifying linearly separable patterns, and its creation sparked immense optimism. It was hailed as the first "thinking machine." However, this excitement was brought to an abrupt halt.
+This critique was devastating. It demonstrated that this simple model was a dead end for solving more complex, real-world problems. The book's impact led to a near-total collapse in neural network funding, an era now known as the "First @ai Winter."
 
-In 1969, AI pioneers Marvin Minsky and Seymour Papert published their book Perceptrons, a rigorous mathematical analysis of the model's limitations. Their most famous critique was the "XOR problem." They proved that a single-layer perceptron could learn simple logic functions like AND or OR, but it was fundamentally incapable of learning the XOR (eXclusive OR) function. The problem is that the "true" and "false" cases for XOR cannot be separated by a single straight line, and a single perceptron is only capable of drawing a single line.
-
-This critique was devastating. It demonstrated that this simple model was a dead end for solving more complex, real-world problems. The book's impact led to a near-total collapse in neural network funding, an era now known as the "First AI Winter."
-
-This failure, however, created the very problem that the next generation of AI researchers had to solve, and it marks the beginning of the great divergence. Minsky and Papert themselves noted that a Multi-Layer Perceptron (MLP)—stacking multiple layers of these units—could theoretically solve the XOR problem by creating more complex decision boundaries. The challenge was that no one knew how to train it. Rosenblatt's rule only worked for a single layer.
+This failure, however, created the very problem that the next generation of @ai researchers had to solve, and it marks the beginning of the great divergence. Minsky and Papert themselves noted that a @mlp, stacking multiple layers of these units—could theoretically solve the XOR problem by creating more complex decision boundaries. The challenge was that no one knew how to train it. Rosenblatt's rule only worked for a single layer.
 
 The critical breakthrough that solved this problem was the independent development and subsequent popularization of the backpropagation algorithm in the 1970s and 1980s. Backpropagation provided an efficient method to calculate the gradient of the error function with respect to all of the network's weights, even in deep layers, allowing for effective training.
 
-This combination—multiple layers of interconnected units (MLPs) trained via backpropagation—defines the architecture that became the foundation for the deep learning revolution. The neural networks of today, from the Convolutional Neural Networks (CNNs) that process images to the Transformers (like GPT) that handle language, all descend from this "mainstream" path. They are all, at their core, vast, multi-layer networks of simple perceptron-like units, trained with a variation of backpropagation. ]
+This combination—multiple layers of interconnected units @mlp:pl trained via backpropagation—defines the architecture that became the foundation for the deep learning revolution. The neural networks of today, from the @cnn that process images to the Transformers (like GPT) that handle language, all descend from this "mainstream" path. They are all, at their core, vast, multi-layer networks of simple perceptron-like units, trained with a variation of backpropagation.
+]
 
 #serif-text()[
-Now, you show the first engineering attempt to build a machine based on these ideas. Introduce Rosenblatt's Perceptron. Explain it as a direct hardware implementation of the McCulloch-Pitts neuron with a Hebbian-style learning rule. The "First Winter": Briefly explain its limitations (the "XOR problem" identified by Minsky & Papert). This is crucial because it creates the problem that the next generation of AI researchers had to solve.
-]
-#serif-text()[
-The term Aritifical Inteligence forms an umbrella over many different techniques that make use of machines to do some intelligent task. The most promising way to acheive AI to day is trough deep neural networks. The neural networks of today are almost exclusivly based on the simple perceptron neuron model. It is a fairly old idea based on a simple model on how the brain processes information. The model of the neuron that the is based on has synapses just like the biological one, the synapses functions as inputs which when firing will exite the reciving neuron more or less depending on the strenth of the connection. If the reciving neuron get exited
-]
-#serif-text()[
 above a threshold it will fire and pass the signal downstream to another reciving neuron. Which is conceptually similar to how real neurons operate. This simple model is called a perceptron, which introduced a learning rule for a single computational neuron capable of classifying linearly separable patterns. However, to the MLP was the understanding that stacking multiple layers of these perceptron-like units could overcome these limitations by creating more complex decision boundaries. The critical breakthrough enabling the practical use of MLPs was the independent development and subsequent popularization of the backpropagation algorithm. Backpropagation provided an efficient method to calculate the gradient of the error function with respect to the network's weights, allowing for effective training of these deeper, multi-layered architectures. This combination---multiple layers of interconnected units
-#footnote[
-While often conceptualized in layers (e.g., layers of the neocortex), the brain's connectivity is vastly more complex than typical feedforward ANNs, featuring extensive recurrent connections, feedback loops, and long-range projections that make a simple 'unrolling' into discrete layers an oversimplification
-],
 typically using non-linear activation functions, trained via backpropagation---defines the MLP, which became a foundational architecture for neural networks and paved the way for the deep learning revolution. GPT, alphafold, etc. all use these fundamentals with differetn variations of architechtures which boils down to how many layers how large layers how dense layers and how they should be connected (attention, RNN, CNN, resnet )
 ]
 
@@ -223,7 +221,9 @@ typically using non-linear activation functions, trained via backpropagation---d
 == The Deep Learning Path
 
 #serif-text()[
-This section explains how mainstream AI solved the Perceptron's problem by abandoning biological realism, The Solution: Backpropagation (1980s): Introduce backpropagation as a powerful, mathematical solution for training multi-layer perceptrons. The Divergence: This is your key argument. Explicitly state why backpropagation is not biologically plausible: Non-local learning: A neuron at the beginning of the network needs an "error signal" from the very end. The brain doesn't do this. Weight Transport Problem: It requires the exact same connection weights to be used for the forward pass (signal) and the backward pass (error), which is not how synapses work. The Result: This path led to modern Deep Learning (ANNs, CNNs, Transformers) on GPUs. The Problem (Revisited): This is where you circle back to your intro. This "engineering" path works, but it led us back to the power and efficiency crisis (von Neumann bottleneck, megawatt models) that you mentioned in Chapter 1.
+This section explains how mainstream @ai solved the Perceptron's problem by abandoning biological realism, The Solution: Backpropagation (1980s): Introduce backpropagation as a powerful, mathematical solution for training multi-layer perceptrons. The Divergence: This is your key argument. Explicitly state why backpropagation is not biologically plausible: Non-local learning: A neuron at the beginning of the network needs an "error signal" from the very end. The brain doesn't do this. Weight Transport Problem: It requires the exact same connection weights to be used for the forward pass (signal) and the backward pass (error), which is not how synapses work. The Result: This path led to modern Deep Learning (ANNs, CNNs, Transformers) on GPUs. The Problem (Revisited): This is where you circle back to your intro. This "engineering" path works, but it led us back to the power and efficiency crisis (von Neumann bottleneck, megawatt models) that you mentioned in Chapter 1.
+
+The term Artificial Intelligence forms an umbrella over many different techniques that make use of machines to do some intelligent task. The most promising way to achieve @ai today is through deep neural networks. The neural networks of today are almost exclusively based on the simple perceptron neuron model. It is a fairly old idea based on a simple model of how the brain processes information. The model of the neuron that it is based on has "synapses" just like the biological one. The synapses function as inputs, each with a "weight" (strength). When inputs are active, they excite the receiving neuron more or less depending on the strength of this connection
 ]
 
 
@@ -238,9 +238,7 @@ It was mentioned in the introduction that the deep learning technique is inefici
 == Birth Of Neuromorphic Computing
 
 #serif-text()[
-Now, you introduce your field as the "other path"—the one that stuck with the biology. The "Father": Carver Mead (1980s): Explain that at the same time backpropagation was taking off, Carver Mead proposed a different path: instead of simulating simplified neurons on digital computers (like deep learning), we should emulate the analog physics of real neurons in silicon (VLSI).
-
-While one branch of AI was abstracting the neuron into a mathematical function to be simulated on digital sequential processors (the von Neumann architecture), Caltech's Carver Mead saw a fundamental inefficiency. He observed that the digital simulation of neural processes was incredibly power-hungry, whereas the brain itself runs complex computations on just a few watts.
+While one branch of @ai was abstracting the neuron into a mathematical function to be simulated on digital sequential processors (the von Neumann architecture), Caltech's Carver Mead saw a fundamental inefficiency. He observed that the digital simulation of neural processes was incredibly power-hungry, whereas the brain itself runs complex computations on just a few watts.
 
 In the 1980s, Mead proposed neuromorphic engineering. The core idea was not to simulate the logic of a neuron, but to emulate its physics. He championed using VLSI (Very-Large-Scale Integration) analog circuits to build artificial neurons and synapses directly in silicon.
 
@@ -258,48 +256,34 @@ Mead's early work, like the silicon retina, proved the concept. It was a chip th
 == Modern Neuroscience
 
 #serif-text()[
-This is where you put the rest of your neuroscience. Spiking Neurons: Explain how they are different from the simple "0 or 1" model. They are temporal and event-driven. They communicate with spikes. Biological Learning: Introduce Spike-Timing-Dependent Plasticity (STDP). Frame this as the biological alternative to backpropagation. It's a modern, measurable version of Hebb's rule that is local and temporal.
-
-The "other path" of neuromorphic computing is deeply intertwined with modern neuroscience, which has revealed that the simple perceptron model omits the most crucial computational ingredients of real neurons.
-
-#v(1em)
-=== Spiking Neurons
-The artificial neurons used in most deep learning models (like ReLU or sigmoid units) are static. They compute a weighted sum of their inputs, apply an activation function, and output a single, continuous value (like 0.83 or 5.2). This value is assumed to represent the neuron's "firing rate."
-
-Biological neurons don't work this way. They are spiking neurons, and their computation is:
-- Temporal: They integrate inputs over time. A neuron's internal state (its membrane potential) rises and falls based on when inputs arrive.
-- Event-Driven: They do not communicate with continuous values. They communicate using discrete, all-or-nothing electrical pulses called action potentials, or "spikes." A neuron only fires a spike when its internal potential crosses a specific threshold. 
-- Efficient: Because they are event-driven, they are sparse. A neuron spends most of its time silent, only consuming energy when it receives or sends a spike.
-
-In this model, information is not just in how many spikes there are (a rate code), but when they occur (a temporal code). A spike arriving a few milliseconds earlier or later can completely change the computational outcome.
-
-#v(1em)
-=== Biological Learning: Spike-Timing-Dependent Plasticity (STDP)
-This different model of computation requires a different model of learning. Deep learning's backpropagation is a "global" algorithm. To update a synapse in the first layer, you need an error signal calculated at the very last layer and propagated all the way back. This is highly effective but biologically implausible; there is no known mechanism for such a precise, "backward" error signal in the brain.
-
-Instead, the brain appears to use local learning rules. The most famous is Hebb's rule: "Neurons that fire together, wire together."
-
-A modern, measurable version of this principle is Spike-Timing-Dependent Plasticity (STDP). STDP is a learning rule that adjusts the strength (the "weight") of a synapse based purely on the relative timing of spikes between the pre-synaptic neuron (the sender) and the post-synaptic neuron (the receiver). 
-
-The rule is simple and local:
-- LTP (Long-Term Potentiation): If the pre-synaptic neuron fires just before the post-synaptic neuron (meaning it likely contributed to the firing), the connection between them is strengthened.
-- LTD (Long-Term Depression): If the pre-synaptic neuron fires just after the post-synaptic neuron (meaning it fired too late and did not contribute), the connection is weakened.
-
-This mechanism allows the network to learn correlations, causal relationships, and temporal patterns directly from the stream of incoming spikes, without any "supervisor" or global error signal. It is the biological alternative to backpropagation and a cornerstone of modern neuromorphic learning.
+Section intro ...
 ]
 
 #v(1em)
-=== Neuron Models
-
+=== Neuron Models And Dynamics
 #serif-text()[
-Write about dynamical models and hoph bifucations, write about modes of firing depending on bifurcations
+The artificial neurons used in most deep learning models (like ReLU or sigmoid units) are static. They compute a weighted sum of their inputs, apply an activation function, and output a single, continuous value (like 0.83 or 5.2). This value is assumed to represent the neuron's firing rate. Biological neurons don't work this way. They are spiking neurons, and their computation is:
+]
+#box-text()[
+- Temporal: They integrate inputs over time. A neuron's internal state (its membrane potential) rises and falls based on when inputs arrive.
+- Event-Driven: They do not communicate with continuous values. They communicate using discrete, all-or-nothing electrical pulses called action potentials, or "spikes." A neuron only fires a spike when its internal potential crosses a specific threshold. 
+- Efficient: Because they are event-driven, they are sparse. A neuron spends most of its time silent, only consuming energy when it receives or sends a spike.
+]
+#serif-text()[
+In this model, information is not just in how many spikes there are (a rate code), but when they occur (a temporal code). A spike arriving a few milliseconds earlier or later can completely change the computational outcome.
+]
+#figure(include("figures/neurondynamics.typ"),caption:[Neuron dynamics])
+#serif-text()[
+Write about dynamical models and hoph bifucations, write about modes of firing depending on bifurcations ...
 ]
 
 #serif-text()[
 The biological neuron is the fundamental building block of the brain. The biological neuron consists of a cell body also called the soma, which contains all of the core machinery that other cells have, like the nucleus and mitochondria. However, it also has distinct structures:
+#box-text()[
 - Dendrites: A branching "input" tree that receives signals from other neurons.
 - Axon: A long "output" cable (which can be over a meter long in humans) that transmits the neuron's own signal.
 - Synapses: The junctions where an axon's terminal meets another neuron's dendrite to pass the signal.
+]
 
 When pre-synaptic neurons fire, they release neurotransmitters (like glutamate or dopamine) across the synapse. These chemicals open ion channels on the post-synaptic neuron, causing its internal electrical potential (the "membrane potential") to increase. If this potential, which is integrated over time, reaches a critical threshold, the neuron itself fires an action potential (a spike) down its axon.
 
@@ -327,7 +311,20 @@ It is observed that neurons fire in short bursts called spikes. Experiments show
 ]
 
 #v(1em)
-=== How Could The Brain Learn
+=== Biological Learning
+#serif-text()[
+This different model of computation requires a different model of learning. Deep learning's backpropagation is a "global" algorithm. To update a synapse in the first layer, you need an error signal calculated at the very last layer and propagated all the way back. This is highly effective but biologically implausible; there is no known mechanism for such a precise, "backward" error signal in the brain.
+
+Instead, the brain appears to use local learning rules. The most famous is Hebb's rule: "Neurons that fire together, wire together."
+
+A modern, measurable version of this principle is Spike-Timing-Dependent Plasticity (STDP). STDP is a learning rule that adjusts the strength (the "weight") of a synapse based purely on the relative timing of spikes between the pre-synaptic neuron (the sender) and the post-synaptic neuron (the receiver). 
+
+The rule is simple and local:
+- LTP (Long-Term Potentiation): If the pre-synaptic neuron fires just before the post-synaptic neuron (meaning it likely contributed to the firing), the connection between them is strengthened.
+- LTD (Long-Term Depression): If the pre-synaptic neuron fires just after the post-synaptic neuron (meaning it fired too late and did not contribute), the connection is weakened.
+
+This mechanism allows the network to learn correlations, causal relationships, and temporal patterns directly from the stream of incoming spikes, without any "supervisor" or global error signal. It is the biological alternative to backpropagation and a cornerstone of modern neuromorphic learning.
+]
 
 #serif-text()[
 - no evidence that brain does not use global error signal like backpropagation uses
@@ -339,7 +336,7 @@ A cornerstone of the success of modern deep learning, particularly with Multi-La
 
 However, when we transition from the continuous-valued, rate-coded signals typical of MLPs to the binary, event-based spikes used in SNNs, this differentiability is lost. The spiking mechanism itself—where a neuron fires an all-or-none spike only when its internal state (e.g., membrane potential) crosses a threshold—is inherently discontinuous. Mathematically, this firing decision is often represented by a step function (like the Heaviside step function), whose derivative is zero almost everywhere and undefined (or infinite) at the threshold.
 
-Consequently, standard backpropagation cannot be directly applied to SNNs. Gradients calculated using the chain rule become zero or undefined at the spiking neurons, preventing error signals from flowing backward through the network to update the weights effectively. This incompatibility represents a substantial obstacle, as it seemingly precludes the use of the highly successful and well-understood gradient-based optimization toolkit that underpins much of modern AI.
+Consequently, standard backpropagation cannot be directly applied to SNNs. Gradients calculated using the chain rule become zero or undefined at the spiking neurons, preventing error signals from flowing backward through the network to update the weights effectively. This incompatibility represents a substantial obstacle, as it seemingly precludes the use of the highly successful and well-understood gradient-based optimization toolkit that underpins much of modern @ai.
 
 Surrogate Gradients: A popular approach involves using a "surrogate" function during the backward pass of training. While the forward pass uses the discontinuous spike generation, the backward pass replaces the step function's derivative with a smooth, differentiable approximation (e.g., a fast sigmoid or a clipped linear function). This allows backpropagation-like algorithms (often termed "spatio-temporal backpropagation" or similar) to estimate gradients and train deep SNNs, albeit with approximations.
 ]
@@ -349,30 +346,23 @@ Surrogate Gradients: A popular approach involves using a "surrogate" function du
 
 #serif-text()[
 However, this abstraction, while powerful, significantly simplifies the underlying neurobiology. Decades of rigorous neuroscience research reveal that brain function emerges from complex electro-chemical and molecular dynamics far richer than the simple weighted sum and static activation. While it's crucial to discern which biological details are fundamental to computation versus those that are merely implementation specifics
-#footnote[
-  Disentangling core computational mechanisms from biological implementation details is a major ongoing challenge in neuroscience and neuromorphic engineering. Some complex molecular processes might be essential for learning or adaptation, while others might primarily serve metabolic or structural roles not directly involved in the instantaneous computation being modeled.
-],
 moving beyond the standard MLP model is necessary to capture more sophisticated aspects of neural processing.
 
 A primary departure lies in the nature of neural communication. Unlike the continuous-valued activations typically passed between layers in an MLP (often interpreted as representing average firing rates), biological neurons communicate primarily through discrete, stereotyped, all-or-none electrical events known as action potentials, or 'spikes'. Information in the brain is encoded not just in the rate of these spikes (rate coding), but critically also in their precise timing, relative delays, and synchronous firing across populations (temporal coding) (Gerstner et al., 2014). For instance, the relative timing of spikes arriving at a neuron can determine its response, allowing the brain to process temporal patterns with high fidelity – a capability less naturally captured by standard MLPs. Spikes can thus be seen as event-based signals carrying rich temporal information.
 
-Furthermore, neural systems exhibit complex dynamics beyond simple feedforward processing. Evidence suggests that cortical networks may operate near a critical state, balanced at the 'edge of chaos,' a regime potentially optimal for information transmission, storage capacity, and computational power. Systems like the visual cortex demonstrate this complexity, where intricate patterns of spatio-temporal spiking activity underlie feature detection, object recognition, and dynamic processing. These biologically observed principles—event-based communication, temporal coding, and complex network dynamics—motivate the exploration of Spiking Neural Networks (SNNs), which explicitly model individual spike events and their timing, offering a potentially more powerful and biologically plausible framework for computation than traditional MLPs.
+Furthermore, neural systems exhibit complex dynamics beyond simple feedforward processing. Evidence suggests that cortical networks may operate near a critical state, balanced at the 'edge of chaos,' a regime potentially optimal for information transmission, storage capacity, and computational power. Systems like the visual cortex demonstrate this complexity, where intricate patterns of spatio-temporal spiking activity underlie feature detection, object recognition, and dynamic processing. These biologically observed principles---event-based communication, temporal coding, and complex network dynamics---motivate the exploration of Spiking Neural Networks (SNNs), which explicitly model individual spike events and their timing, offering a potentially more powerful and biologically plausible framework for computation than traditional MLPs. This path (Neuromorphic) is the one that directly addresses the efficiency problem by using event-driven, spiking, and local learning rules, just like the brain.
 ]
-
-#serif-text()[
-This path (Neuromorphic) is the one that directly addresses the efficiency problem by using event-driven, spiking, and local learning rules, just like the brain.
-]
-
-Here is the filled-in section, detailing the current landscape and creating a clear opening for your thesis work.
 
 #v(2em)
 == Neuromorphic State Of The Art\ & Research Gaps
 
 #serif-text()[
-"Where we are now." Briefly cover the hardware (Loihi, TrueNorth) and simulators (Brian, Nengo) that implement the ideas from 2.4. End the chapter by perfectly setting up your own work: "While these systems exist, they still struggle with [the specific problem your thesis solves]... This thesis proposes a method to..."
+Disentangling core computational mechanisms from biological implementation details is a major ongoing challenge in neuroscience and neuromorphic engineering. Some complex molecular processes might be essential for learning or adaptation, while others might primarily serve metabolic or structural roles not directly involved in the instantaneous computation being modeled.
+]
 
+#serif-text()[
 The principles of neuromorphic computing, born from Carver Mead's vision and informed by modern neuroscience, have matured from theoretical concepts into a vibrant field of applied research. This progress is best seen in two key areas: the development of specialized, brain-inspired hardware and the creation of sophisticated software frameworks for simulating and deploying spiking neural networks (SNNs).
-
+#v(1em)
 === Neuromorphic Hardware
 The primary goal of neuromorphic hardware is to escape the von Neumann bottleneck and emulate the power efficiency and massive parallelism of the brain. Two landmark systems define the state of the art:
 
@@ -380,6 +370,7 @@ IBM TrueNorth: A prominent early example, TrueNorth is a fully digital, real-tim
 
 Intel Loihi (and Loihi 2): Intel's line of neuromorphic research chips, starting with Loihi in 2017, represents a significant step towards flexible, on-chip learning. Like TrueNorth, Loihi is an asynchronous, event-driven digital chip, but with a key difference: it features programmable "learning engines" within each of its 128 neuromorphic cores. This allows researchers to implement and test dynamic learning rules, such as STDP and its variants, directly on the hardware in real-time. The second generation, Loihi 2, further refines this with greater scalability, improved performance, and more advanced, programmable neuron models, positioning it as a leading platform for cutting-edge neuromorphic algorithm research. 
 
+#v(1em)
 === Simulation and Software Frameworks
 Before algorithms can be deployed on specialized hardware, they must be designed, tested, and validated. This is the role of SNN simulators, which function as the "TensorFlow" or "PyTorch" of the neuromorphic world.
 
@@ -387,6 +378,7 @@ Brian: A highly flexible and popular SNN simulator used extensively in the compu
 
 Nengo: A powerful, high-level framework that functions as a "neural compiler." Nengo is built on a strong theoretical foundation (the Neural Engineering Framework) that allows users to define complex computations and dynamical systems in high-level Python code. Nengo then "compiles" this functional description into an equivalent SNN. Its key advantage is its backend-agnostic nature; the same Nengo-defined network can be run on a standard CPU, a GPU, or deployed directly to neuromorphic hardware like Intel's Loihi.
 
+#v(1em)
 === The Research Gap: The Learning Problem
 Despite this immense progress in hardware and software, a fundamental challenge remains, creating a critical research gap: the training problem.
 
@@ -416,22 +408,20 @@ By doing this, you've already "banked" a major contribution before you even show
 #serif-text()[
 A neuron should have the following charecteristcs
 ]
-#block(stroke:(thickness:0pt, paint:luma(0)), inset: 10pt, radius: 0pt, fill: colors.gray.light,
-  width: 100%)[#text(weight:"medium")[
+#box-text()[
   - Acuumulate spikes in some form (integrate)
   - Fire when some treshold has been reached
   - Leak the potential over time
-]]
+]
 #serif-text()[
 A neural code should
 ]
-#block(stroke:(thickness:0pt, paint:luma(0)), inset: 10pt, radius: 0pt, fill: colors.gray.light,
-  width: 100%)[#text(weight:"medium")[
+#box-text()[
   - be fast
   - be effecient in terms of neurons used
   - able to encode a wide range of stimuli
   - robust to noise
-]]
+]
 
 #serif-text()[
 Problem of phase for temporal encodings

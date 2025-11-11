@@ -12,13 +12,10 @@
 #let xs = (0, 1, 2, 3, 4)
 
 #lq.diagram(
-  title: sans-text()[Linear accumulating neuron model],
-  xlabel: [t], 
-  ylabel: [potential],
-
-  lq.plot(xs, (3, 5, 4, 2, 3), mark: "s", label: [A]),
-  lq.plot(
-    xs, x => 2*calc.cos(x) + 3, 
-    mark: "s", label: [B]
+  title: sans-text()[Neuron dynamics],
+  lq.quiver(
+    lq.arange(-2, 3),
+    lq.arange(-2, 3),
+    (x, y) => (x + y, y - x)
   )
-)
+))
