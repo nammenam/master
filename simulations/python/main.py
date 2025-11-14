@@ -71,7 +71,7 @@ def draw_neurons(batch, group):
             circles.append(new_circle)
     return circles
 
-playback_speed = 20
+playback_speed = 100
 # image_path = 'data/doomguy.jpg'
 # image_path = 'data/lenna.png'
 # original_image = Image.open(image_path)
@@ -82,11 +82,15 @@ playback_speed = 20
 random_image1 = create_random_image_one_channel(int(np.sqrt(NETWORK_SHAPE[0])),int(np.sqrt(NETWORK_SHAPE[0])))
 random_image2 = create_random_image_one_channel(int(np.sqrt(NETWORK_SHAPE[0])),int(np.sqrt(NETWORK_SHAPE[0])))
 random_image3 = create_random_image_one_channel(int(np.sqrt(NETWORK_SHAPE[0])),int(np.sqrt(NETWORK_SHAPE[0])))
-rows = [4,4,4]
-cols = [3,4,5]
-inject_pattern(random_image1, rows,cols, 32)
-inject_pattern(random_image2, rows,cols, 32)
-inject_pattern(random_image3, rows,cols, 32)
+rows1 = [4,4,4]
+cols1 = [3,4,5]
+rows2 = [7,7,7]
+cols2 = [4,5,6]
+rows3 = [2,2,2]
+cols3 = [2,3,4]
+inject_pattern(random_image1, rows1,cols1, 255)
+inject_pattern(random_image2, rows2,cols2, 255)
+inject_pattern(random_image3, rows3,cols3, 255)
 # input_image = np.array(low_res_image_pil)
 # input_image = generate_checkerboard(size=max_dim, block_size=int(max_dim/7))
 # input_image = MNIST[24]
@@ -128,7 +132,7 @@ def update(dt):
     if time_slice <= 0:
         return
 
-    spiked_indices, grown_synapses, is_empty = sim.advance(time_slice)
+    spiked_indices, grown_synapses, pruned_synapses, is_empty = sim.advance(time_slice)
     if is_empty:
         sim.next_data(data)
         update_image(data[sim.iteration], image)
@@ -153,6 +157,19 @@ def update(dt):
                             thickness=2, color=(EDGE_C, EDGE_C, EDGE_C, 64), # Blue-ish synapse
                             batch=batch, group=background_group)
             connections[(pre_idx, post_idx)] = new_line
+    for pre_idx, post_idx in pruned_synapses:
+            # Check if we are tracking this connection
+            if (pre_idx, post_idx) in connections:
+                # Get the actual Line object
+                line_to_delete = connections[(pre_idx, post_idx)]
+            
+                # Check if it's not already None (just in case)
+                if line_to_delete:
+                    # Tell Pyglet to delete the visual object
+                    line_to_delete.delete() 
+            
+                # Remove the key from our tracking dictionary
+                del connections[(pre_idx, post_idx)]
     time_label.text = f'{sim.now_time:.2f}ms'
 
 @window.event

@@ -35,4 +35,10 @@
     long: "Convolutional Neural Network",
     description: "",
   ),
+  (
+    key: "ap",
+    short: "",
+    long: "action potential",
+    description: "Voltage potential in the neuron cell membrane that propagates trough the neurons axon and to its synapses",
+  ),
 )
