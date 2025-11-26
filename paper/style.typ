@@ -1,26 +1,22 @@
 #let style(it) = {
   set text(font: "Geist", size: 11pt, weight: "medium", top-edge:.7em)
   show math.equation : set text(font:"TeX Gyre Schola Math", size: 12pt)
-  show raw : set text(font:"GeistMono NF", weight: "medium", size:9pt)
+  show raw : set text(font:"GeistMono NF", weight: "medium", size:10pt)
   set list(marker: sym.bullet, indent: 1em)
   show heading: set text(font:"Geist",weight: "bold", style:"normal")
   show heading.where( level: 1 ): it => block(width: 100%)[
-    #set align(left + horizon); #set text(24pt)
+    #set align(left + horizon); #set text(28pt)
     #upper(it)
     #v(.8em)
   ]
   show heading.where( level: 2 ): it => block(width: 100%)[
-    #set align(left + horizon); #set text(16pt)
+    #set align(left + horizon); #set text(18pt)
     #upper(it)
     #v(.8em)
   ]
   show heading.where( level: 3 ): it => block(width: 100%)[
-    #set text(12pt,weight: "semibold"); #upper(it) #v(0.4em)
+    #set text(14pt,weight: "semibold"); #upper(it) #v(0.4em)
   ]
-  show heading.where( level: 4 ): it => block(width: 100%)[
-    #set text(11pt,weight: "semibold"); #upper(it) #v(0.3em)
-  ]
-
   show figure.caption: it => {
     set align(left)
     set par(justify: true)

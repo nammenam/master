@@ -147,7 +147,7 @@
       #place(bottom + left, dx: 11mm, dy: -14mm, text(size: small-size,font:body-font, date))
       #place(top + left, dx: 11mm, dy: 14mm,
         cover-text(
-          "Neuromorphic Computing",
+          "NEUROMORPHIC COMPUTING",
           "Brage Wiseth",
           subtitle: "With Spiking Neural Networks",
           sp-name: "Philip Haflinger",
