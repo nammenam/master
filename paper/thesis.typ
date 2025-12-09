@@ -547,6 +547,8 @@ $ min_bold(theta) space cal(L)(f(bold(x) bold(theta)) bold(y)) $
 
 Backpropagation and Automatic Differentiation Since the parameters bold(theta) determine the output, they are responsible for the error. To minimize the loss, we must calculate the contribution of every single parameter to that error. This requires computing the gradient of the loss function with respect to every weight: $nabla W cal(L)$.
 
+#figure(include("figures/gradientdecent.typ"), caption:[Gradient decent])
+
 Because the network is a nested composite function, we utilize the Chain Rule of calculus. This process is known as Backpropagation. We compute the gradients starting from the output layer and propagate them backward toward the input. For a specific weight w connecting neuron j to i in layer l, the gradient is decomposed as:
 
 $ (partial cal(L)) / (partial w_(i j)^((l))) = (partial cal(L)) / (partial a_i^((l))) dot (partial a_i^((l))) / (partial z_i^((l))) dot (partial z_i^((l))) / (partial w_(i j)^((l))) $
@@ -557,7 +559,7 @@ Gradient Dynamics and Activation Functions The choice of the activation function
 
 However, the specific choice of non-linearity dictates the stability of the gradients. During backpropagation, gradients are multiplied primarily by the derivative of the activation function $sigma(z)$. ]
 
-#figure(image("figures/gd.jpg", width: 80%), caption:[Common activation functions. The Sigmoid function (left) saturates at the extremes, causing gradients to vanish. The ReLU function (right) maintains a constant gradient for positive inputs.])
+#figure(include("figures/activations.typ"), caption:[Common activation functions. The Sigmoid function (left) saturates at the extremes, causing gradients to vanish. The ReLU function (right) maintains a constant gradient for positive inputs.])
 
 #serif-text()[ If we utilize the traditional Sigmoid or Tanh functions, the derivative is strictly less than 1 (max 0.25 for Sigmoid). As we multiply these small numbers across many layers, the gradient exponentially decays toward zero. This is known as the Vanishing Gradient Problem, effectively preventing deep networks from learning. Conversely, if weights are initialized poorly, gradients can accumulate to become infinitely large, known as Gradient Explosion.
 
@@ -568,9 +570,14 @@ To mitigate this, modern networks often employ the Rectified Linear Unit (ReLU),
 $ Delta w = cases( A^+ exp(-Delta t / tau^+) & "if" Delta t > 0, -A^- exp(Delta t / tau^-) & "if" Delta t < 0 ) $
 ])<stdp_eq>
 
-#serif-text()[ Where $Delta t = t_"post" −t_"pre"$. The nwtwork architecthure should be paralizeable allowing for each neuron to operate independenly with only a local influence from other neurons, some neurons can act as hubs allowing clusters with specialzed tasks to communicate. ]
+#serif-text()[ Where $Delta t = t_"post" −t_"pre"$. The nwtwork architecthure should be paralizeable allowing for each neuron to operate independenly with only a local influence from other neurons, some neurons can act as hubs allowing clusters with specialzed tasks to communicate.
 
-#figure( include("figures/architecture.typ"), caption: [Proposed simplifed layout of a SNN. The neurons are connected with hirearcical busses that allow for the network to be configured as a _small world network_] )
+Forward and backwards propagation works in similar ways for a @snn depending on the implementation the main difference and what gives @snn an edge is that the propagation is often asynchronos saving energy, the propagation of information is also sparse in comparison to @ann only events gets propagated when they happen zero values are not propageted as they are treated as an absens of an event
+
+In memory computing
+Have to be parallell
+Add von Neumann and in memory computing diagrams ]
+
 
 #v(1em)
 === Key Concepts In Neuromorphic Engineering
@@ -589,6 +596,13 @@ Eliminating the separation between the processor and the RAM. In a neuromorphic 
 #serif-text()[ Consequently, standard backpropagation cannot be directly applied to SNNs. Gradients calculated using the chain rule become zero or undefined at the spiking neurons, preventing error signals from flowing backward through the network to update the weights effectively. This incompatibility represents a substantial obstacle, as it seemingly precludes the use of the highly successful and well-understood gradient-based optimization toolkit that underpins much of modern @ai.
 
 Surrogate Gradients: A popular approach involves using a "surrogate" function during the backward pass of training. While the forward pass uses the discontinuous spike generation, the backward pass replaces the step function's derivative with a smooth, differentiable approximation (e.g., a fast sigmoid or a clipped linear function). This allows backpropagation-like algorithms (often termed "spatio-temporal backpropagation" or similar) to estimate gradients and train deep SNNs, albeit with approximations. ]
+
+#v(1em)
+=== Hardware
+
+#figure( include("figures/vonneuman.typ"), caption: [Von Neuman])
+
+#figure( include("figures/inmemory.typ"), caption: [In-memory])
 
 #pagebreak()
 == Neuromorphic State Of The Art
@@ -729,6 +743,71 @@ The neuron models and encoding are intertwined and cannot be developed separatly
 Longer patterns require a latched state such as neurons entering repeated firing like a state machine
 Some neurons have other properties like bursting modes or continuous firing once the threshold has been reached.
 Inhibition should make a neuron not fire ]
+
+
+Explain in detail how we encode information using neural codes using pseudo code
+
+Code
+Rate code is simple will not use it
+Temporal codes
+
+#v(1em)
+=== Representing sensory input
+
+```python
+def intensity_to_delay_encoding(image, T_max=100, T_min=0):
+    normalized_image = image.astype(float) / 255.0
+    spike_times = T_max - (T_max - T_min) * normalized_image
+    # print(spike_times.shape)
+    # data = spike_times[(spike_times < 100)]
+    # print(data.shape)
+    return spike_times
+
+def negative_image_encoding(image, T_max=100, T_min=0):
+    negative_image = 255 - image
+    return intensity_to_delay_encoding(negative_image, T_max=T_max, T_min=T_min)
+
+def integrate_and_fire(excitatory, inhibitory, threshold=1.0):
+    excitatory_spikes = [(t, 1) for t in excitatory.flatten() if not np.isnan(t)]
+    if inhibitory is None:
+        inhibitory_spikes = []
+    else:
+        inhibitory_spikes = [(t, -1) for t in inhibitory.flatten() if not np.isnan(t)]
+    all_spikes = excitatory_spikes + inhibitory_spikes
+    if not all_spikes:
+        return None
+    all_spikes.sort(key=lambda x: x[0])
+    integrated_potential = 0.0
+    firing_time = None
+    for time, spike_type in all_spikes:
+        integrated_potential += spike_type
+        integrated_potential = max(0, integrated_potential)
+        if integrated_potential >= threshold:
+            firing_time = time
+            break
+    return firing_time
+```
+
+#v(1em)
+=== Deeper layer representation
+
+How neurons use coding
+We have seen that glif neuron is bio plausible and such a neuron is simple and can be realized easily on hardware the way. Using a temporal code the neuron has to differentiate between inputs in the time domain otherwise it cannot decode the information and cannot do useful work. Earlier inputs are encoded with larger values and should have a greater portion of summation going on inside the neuron.
+
+-If order matters (temporal code) the neuron must handle it
+
+For visual tasks which is what the application this thesis focuses on 
+1. a population code is used in conjunction with a temporal code
+2. Population code is used alone (eg individual order within a population does not matter)
+
+A counter starts when the first spike arrives
+Needs a global reset or local
+
+
+#v(1em)
+=== Perceptron equivalence
+
+The perceptron equation can be obtained with a ttfs using the inverse of firing times
 
 #figure( kind: "eq", supplement: [Equation], caption: [Weigthed sum], [
 $ T = sum w/t $
