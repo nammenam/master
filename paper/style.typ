@@ -1,21 +1,28 @@
 #let style(it) = {
-  set text(font: "Geist", size: 11pt, weight: "medium", top-edge:.7em)
-  show math.equation : set text(font:"TeX Gyre Schola Math", size: 12pt)
+  set text(font: "Geist", size: 11pt, weight: "regular", top-edge:.7em)
+  // show math.equation : set text(font:"New Computer Modern Math", size: 12pt, weight: "medium")
+  show math.equation : set text(font:"STIX Two Math", size: 12pt, weight: "medium")
+  // show math.equation : set text(font:"TeX Gyre Schola Math", size: 12pt, weight: "medium")
   show raw : set text(font:"GeistMono NF", weight: "medium", size:10pt)
   set list(marker: sym.bullet, indent: 1em)
   show heading: set text(font:"Geist",weight: "bold", style:"normal")
   show heading.where( level: 1 ): it => block(width: 100%)[
-    #set align(left + horizon); #set text(28pt)
+    #set align(left + horizon)
+    #set text(28pt)
     #upper(it)
     #v(.8em)
   ]
   show heading.where( level: 2 ): it => block(width: 100%)[
-    #set align(left + horizon); #set text(18pt)
+    #set align(left + horizon)
+    #set text(18pt)
     #upper(it)
     #v(.8em)
   ]
   show heading.where( level: 3 ): it => block(width: 100%)[
-    #set text(14pt,weight: "semibold"); #upper(it) #v(0.4em)
+    #set align(left + horizon)
+    #set text(14pt)
+    #upper(it)
+    #v(0.4em)
   ]
   show figure.caption: it => {
     set align(left)
@@ -31,8 +38,9 @@
 }
 
 #let serif-text(body) = {
-  set text(font: "Source Serif 4 18pt", size: 12pt, weight: "medium", top-edge:.7em)
-  // set text(font: "Source Serif 4 18pt", size: 11pt, weight: "medium")
+  set text(font: "Source Serif 4 18pt", size: 12pt, weight: "regular", top-edge:.7em)
+  // set text(font: "STIX Two Text", size: 12pt, weight: "regular", top-edge:.7em)
+  // set text(font: "Source Serif 4 18pt", size: 12pt, weight: "medium", top-edge:.7em)
   body
 }
 
@@ -44,4 +52,9 @@
 #let box-text(body) = {
 block(stroke:(thickness:0pt, paint:luma(0)), inset: 10pt, radius: 0pt, fill: luma(220),
   width: 100%)[#body]
+}
+
+#let mini-header(body) = {
+  set text(font:"Geist",weight: "bold", size: 11pt)
+  upper(body)
 }
